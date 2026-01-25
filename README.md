@@ -51,6 +51,8 @@ we-ne は、**給付を金融ではなく生活インフラとして扱う**た�
 
 現在の we-ne は、以下の仕様で **実際に動作する MVP** になっています。
 
+### スマートコントラクト（grant_program）
+
 - SPL トークン限定の給付プログラム  
 - 固定レート方式（例：1 トークン = 1 円相当として運用）  
 - 定期給付（1 期間につき 1 回のみ受給可能）  
@@ -62,6 +64,16 @@ Create Grant → Fund Grant → Periodic Claim → Pause / Resume
 ```
 
 Anchor による `build / test` は通過済みです。
+
+### モバイルアプリ（wene-mobile）
+
+- React Native（Expo + TypeScript）による受給者向けUI
+- Solanaウォレット連携（Phantom Wallet対応）
+- 給付プログラムへの接続と受給機能
+- Deep Link対応（`wene://r/<campaignId>` および `https://wene.app/r/<campaignId>`）
+- iOS / Android 両対応
+
+モバイルアプリの詳細は [`wene-mobile/README.md`](./wene-mobile/README.md) を参照してください。
 
 ---
 
@@ -122,33 +134,75 @@ we-ne は、条件を複雑化するのではなく、
 ```text
 we-ne/
 ├─ README.md
-├─ grant_program/
+├─ grant_program/          # Solana スマートコントラクト（Anchor）
 │  ├─ Anchor.toml
 │  ├─ programs/
 │  │  └─ grant_program/
 │  │     └─ src/
-│  │        └─ lib.rs   # Grant / Claim / Allowlist / Receipt の中核実装
-│  └─ tests/            # Anchor tests
+│  │        └─ lib.rs     # Grant / Claim / Allowlist / Receipt の中核実装
+│  └─ tests/              # Anchor tests
+└─ wene-mobile/           # モバイルアプリ（React Native + Expo）
+   ├─ app/                # Expo Router による画面定義
+   ├─ src/                # アプリケーションロジック
+   │  ├─ solana/          # Solana クライアント実装
+   │  ├─ screens/         # 画面コンポーネント
+   │  └─ wallet/          # ウォレットアダプター
+   └─ android/            # Android ネイティブプロジェクト
+   └─ ios/                # iOS ネイティブプロジェクト
 ```
 
 ---
 
 ## 開発環境
 
+### スマートコントラクト（grant_program）
+
 - Rust  
 - Solana CLI  
 - Anchor  
 - anchor-lang / anchor-spl
 
-### ビルド
+#### ビルド
 ```bash
+cd grant_program
 anchor build
 ```
 
-### テスト
+#### テスト
 ```bash
+cd grant_program
 anchor test
 ```
+
+### モバイルアプリ（wene-mobile）
+
+- Node.js（推奨: v18以上）
+- npm または yarn
+- Expo CLI
+- iOS開発: Xcode（macOSのみ）
+- Android開発: Android Studio / Android SDK
+
+#### セットアップ
+```bash
+cd wene-mobile
+npm install
+```
+
+#### 開発サーバー起動
+```bash
+npm start
+```
+
+#### ビルド
+```bash
+# Android APK
+npm run build:apk
+
+# iOS Simulator
+npm run build:ios
+```
+
+詳細な手順は [`wene-mobile/README.md`](./wene-mobile/README.md) を参照してください。
 
 ---
 
@@ -166,7 +220,10 @@ anchor test
 
 - Anchor build: ✅  
 - Anchor test: ✅  
-- SPL fixed-rate periodic grant (MVP)
+- SPL fixed-rate periodic grant (MVP): ✅
+- Mobile app (React Native + Expo): ✅
+- Wallet integration (Phantom): ✅
+- Deep Link support: ✅
 
 ---
 

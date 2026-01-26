@@ -129,6 +129,51 @@ we-ne は、条件を複雑化するのではなく、
 
 ---
 
+## Japan-Focused Use Cases
+
+This section outlines realistic, near-term pilot scenarios where we-ne can be deployed in Japan. These use cases are written in English for Solana Foundation Japan reviewers and ecosystem stakeholders.
+
+### The Problem with Existing Distribution Systems
+
+Japan's current grant and benefit distribution relies on bank transfers and manual administrative workflows, which creates structural friction:
+
+- **Business-hour constraints**: Bank transfers do not settle on weekends, holidays, or outside daily cut-off times. Urgent disbursements are delayed by days.
+- **Per-transaction fees**: Transferring small amounts (under 10,000 JPY) costs 200-400 JPY per transaction, making frequent micro-grants economically unviable.
+- **Processing bottlenecks**: Each disbursement requires human verification, causing backlogs during high-volume periods such as disaster response.
+- **Limited auditability**: Recipients cannot independently verify disbursement conditions or timing without requesting internal records.
+
+### Target Use Cases
+
+**Municipal Emergency and Livelihood Support**  
+City and ward offices distribute emergency benefits or livelihood assistance. With we-ne, a municipality defines eligibility via allowlist, funds a grant vault, and residents claim directly from a mobile wallet—bypassing days-long bank batch processing.
+
+**Scholarship and Educational Support Credits**  
+Schools, PTAs, and foundations provide grants for supplies, meals, or activities. We-ne enables fixed-value credits that students or guardians claim on demand, with every disbursement recorded on-chain for transparent accounting.
+
+**Rapid Disaster Relief Distribution**  
+After earthquakes or typhoons, affected households wait weeks for relief due to verification queues. We-ne allows pre-registered resident lists to receive support immediately once a grant is activated.
+
+**Regional NPOs and Mutual-Aid Groups**  
+Small community organizations distribute modest funds to members. Conventional bank fees erode small transfers. Solana's near-zero costs make weekly or daily micro-disbursements sustainable.
+
+### Additional Pilot Scenarios
+
+- **Local consumption incentives**: Municipalities issuing regional spending credits to registered residents
+- **After-school program subsidies**: Governments funding youth activity participation through claimable credits
+- **Volunteer stipends**: Per-session payments to registered volunteers without invoicing overhead
+- **Senior welfare disbursements**: Periodic small grants where the claim action serves as a lightweight activity signal
+
+### Why Solana Fits
+
+| Requirement | Solana Capability |
+|-------------|-------------------|
+| Immediate settlement | Sub-second finality; recipients see funds instantly |
+| Cost-effective micro-grants | Transaction fees under 0.01 USD |
+| Mobile-first access | Claim via smartphone wallet; no bank account required |
+| Transparent execution | All events verifiable on-chain without exposing personal data |
+
+---
+
 ## リポジトリ構成
 
 ```text

@@ -14,16 +14,22 @@
 
 ## Demo
 
-> **Note**: Demo video will be added here once available.
+**Demo Video**:
 
-**Current Flow**:
-1. Recipient opens mobile app and connects Phantom wallet
-2. Recipient scans QR code or opens deep link (`wene://r/<campaignId>`)
-3. App displays grant details (amount, period, eligibility)
-4. Recipient taps "Claim" → Phantom wallet signs transaction
-5. SPL tokens are transferred to recipient's wallet within seconds
+https://github.com/hk089660/-instant-grant-core/blob/feature/japan-use-cases/docs/demo.mp4
 
-**Status**: MVP is functional. UI/UX improvements and demo video are in progress.
+**日本語**: デモ動画では、モバイルアプリからPhantomウォレットを接続し、給付プログラムに接続して受給する一連の流れを確認できます。
+
+**English**: The demo video shows the complete flow of connecting a Phantom wallet from the mobile app, accessing a grant program, and claiming benefits.
+
+**What the demo shows**:
+1. Opening the mobile app and connecting Phantom wallet
+2. Scanning QR code or opening deep link (`wene://r/<campaignId>`)
+3. Viewing grant details (amount, period, eligibility)
+4. Tapping "Claim" → Phantom wallet signing the transaction
+5. SPL tokens being transferred to recipient's wallet within seconds
+
+**Status**: MVP is functional and demonstrated in the video above.
 
 ---
 

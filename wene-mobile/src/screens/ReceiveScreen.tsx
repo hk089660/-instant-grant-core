@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // #region agent log
 fetch('http://127.0.0.1:7242/ingest/2e86959c-0542-444e-a106-629fb6908b3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReceiveScreen.tsx:4',message:'importing @solana/web3.js',data:{platform:Platform.OS},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
@@ -136,39 +137,111 @@ export const ReceiveScreen: React.FC = () => {
   };
 
   const handleConnect = async () => {
-    if (!dappEncryptionPublicKey || !dappSecretKey) return;
+    console.log('[handleConnect] called', { 
+      hasDappKey: !!dappEncryptionPublicKey, 
+      hasSecretKey: !!dappSecretKey,
+      state 
+    });
+    
+    // キーペアが初期化されていない場合は初期化を試みる
+    if (!dappEncryptionPublicKey || !dappSecretKey) {
+      try {
+        console.log('[handleConnect] Initializing key pair...');
+        
+        // まず既存のキーペアを読み込む
+        let keyPair = await loadKeyPair();
+        
+        if (!keyPair) {
+          // キーペアが存在しない場合は新規作成
+          console.log('[handleConnect] Creating new key pair...');
+          try {
+            keyPair = getOrCreateKeyPair();
+            await saveKeyPair(keyPair);
+            console.log('[handleConnect] Key pair created and saved');
+          } catch (createError) {
+            console.error('[handleConnect] Failed to create key pair:', createError);
+            throw new Error('キーペアの作成に失敗しました: ' + (createError instanceof Error ? createError.message : String(createError)));
+          }
+        } else {
+          console.log('[handleConnect] Key pair loaded from storage');
+        }
+        
+        // ストアから最新の値を取得（非同期更新のため）
+        // saveKeyPair が set() を呼ぶので、少し待ってから確認
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // ストアから最新の値を取得
+        const currentStore = usePhantomStore.getState();
+        if (!currentStore.dappEncryptionPublicKey || !currentStore.dappSecretKey) {
+          console.error('[handleConnect] Keys still not available after initialization', {
+            hasPublicKey: !!currentStore.dappEncryptionPublicKey,
+            hasSecretKey: !!currentStore.dappSecretKey,
+          });
+          setError('暗号化キーの初期化に失敗しました。アプリを再起動してください。');
+          return;
+        }
+        
+        console.log('[handleConnect] Key pair initialized successfully');
+      } catch (error) {
+        console.error('[handleConnect] Key pair initialization failed:', error);
+        const errorMessage = error instanceof Error ? error.message : '暗号化キーの初期化に失敗しました';
+        setError(errorMessage);
+        return;
+      }
+    }
+    
     setState('Connecting');
     try {
+      // まず、Phantomリダイレクト処理画面に遷移
+      console.log('[handleConnect] Navigating to phantom/connect route...');
+      router.push('/phantom/connect' as any);
+      
+      // 少し待ってからPhantomアプリを開く（ルート遷移を確実にするため）
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       // connectUrlを生成（デバッグ用）
+      // app_urlはPhantomが検証するため、実際に存在するドメインである必要がある
+      // 開発環境では、localhostや127.0.0.1は使用できない可能性がある
+      // 本番環境では、実際のドメイン（https://wene.app）を使用する必要がある
+      // 
+      // エラーコード-32603の解決方法:
+      // 1. Phantom Portal (https://portal.phantom.app/) にアプリを登録する
+      // 2. app_urlがブロックリストに載っていないか確認する
+      // 3. Phantomアプリを最新版に更新する
+      // 4. 一時的に別のドメインでテストする（例: https://example.com）
+      //
+      // 注意: 本番環境では、実際のドメイン（https://wene.app）を使用してください
+      const appUrl = 'https://wene.app';
+      const redirectLink = 'wene://phantom/connect';
+      
+      console.log('[handleConnect] Using app_url:', appUrl);
+      console.log('[handleConnect] Using redirect_link:', redirectLink);
+      console.log('[handleConnect] dappEncryptionPublicKey length:', dappEncryptionPublicKey!.length);
+      console.log('[handleConnect] dappEncryptionPublicKey preview:', dappEncryptionPublicKey!.substring(0, 50) + '...');
+      
       const connectUrl = buildPhantomConnectUrl({
-        dappEncryptionPublicKey,
-        redirectLink: 'wene://phantom/connect',
+        dappEncryptionPublicKey: dappEncryptionPublicKey!,
+        redirectLink,
         cluster: 'devnet',
-        appUrl: 'https://wene.app',
+        appUrl,
       });
       
       // デバッグ: connectUrlをログ出力
       console.log('[handleConnect] connectUrl:', connectUrl);
       
-      // デバッグ: 先頭だけToastで表示（空文字/undefined対策）
-      if (Platform.OS === 'android') {
-        const { ToastAndroid } = require('react-native');
-        const urlPreview = connectUrl && connectUrl.length > 0 
-          ? connectUrl.substring(0, 30) + '...' 
-          : 'URL未設定';
-        ToastAndroid.show(`URL: ${urlPreview}`, ToastAndroid.SHORT);
-      }
-      
       await initiatePhantomConnect(
-        dappEncryptionPublicKey,
-        dappSecretKey,
-        'wene://phantom/connect',
+        dappEncryptionPublicKey!,
+        dappSecretKey!,
+        redirectLink,
         'devnet',
-        'https://wene.app'
+        appUrl
       );
     } catch (e) {
+      console.error('[handleConnect] Error:', e);
       setState('Idle');
       setError(e instanceof Error ? e.message : 'Phantomを開けません');
+      // エラー時は元の画面に戻る
+      router.back();
     }
   };
 
@@ -284,7 +357,7 @@ export const ReceiveScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -377,7 +450,7 @@ export const ReceiveScreen: React.FC = () => {
                 onPress={handleConnect}
                 variant="secondary"
                 loading={state === 'Connecting'}
-                disabled={state === 'Connecting' || !!walletPubkey}
+                disabled={state === 'Connecting'}
                 style={styles.claimButton}
               />
             </Card>
@@ -420,7 +493,7 @@ export const ReceiveScreen: React.FC = () => {
           )}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

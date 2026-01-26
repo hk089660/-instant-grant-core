@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { PublicKey } from '@solana/web3.js';
 import { getGrantByCampaignId } from '../../src/api/getGrant';
 import type { Grant } from '../../src/types/grant';
@@ -166,7 +167,7 @@ export default function UseScreen() {
   const canUse = !expired && !isUsed && useScreenState !== 'Used' && walletPubkey && phantomSession;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <AppText variant="h2" style={styles.title}>
@@ -269,7 +270,7 @@ export default function UseScreen() {
           ) : null}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

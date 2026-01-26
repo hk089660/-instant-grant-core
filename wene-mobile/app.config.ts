@@ -32,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     scheme: 'wene', // Custom scheme for deeplink (wene://r/*)
     version: timestamp ? `1.0.0-${timestamp}` : '1.0.0',
     orientation: 'portrait',
-  // icon: './assets/icon.png', // TODO: Add icon asset
+    icon: './assets/icon.png', // fix-icon-after-prebuild.jsでicon-source.pngに置き換えられます
   userInterfaceStyle: 'light',
   splash: {
     // image: './assets/splash.png', // TODO: Add splash asset
@@ -50,8 +50,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   android: {
     versionCode,
     adaptiveIcon: {
-      // foregroundImage: './assets/adaptive-icon.png', // TODO: Add adaptive icon asset
-      backgroundColor: '#ffffff',
+      foregroundImage: './assets/icon.png', // fix-icon-after-prebuild.jsでicon-source.pngに置き換えられます
+      backgroundColor: '#FFFFFF',
     },
     package: 'jp.wene.app',
     intentFilters: [

@@ -49,16 +49,50 @@ export interface BuildClaimTxResult {
 export async function buildClaimTx(
   params: BuildClaimTxParams
 ): Promise<BuildClaimTxResult> {
+  // typeofチェックを追加（undefinedな関数を特定するため）
+  console.log('[buildClaimTx] ===== TYPE CHECK START =====');
+  console.log('[buildClaimTx] typeof PublicKey:', typeof PublicKey);
+  console.log('[buildClaimTx] typeof Transaction:', typeof Transaction);
+  console.log('[buildClaimTx] typeof SystemProgram:', typeof SystemProgram);
+  console.log('[buildClaimTx] typeof SYSVAR_RENT_PUBKEY:', typeof SYSVAR_RENT_PUBKEY);
+  console.log('[buildClaimTx] typeof TOKEN_PROGRAM_ID:', typeof TOKEN_PROGRAM_ID);
+  console.log('[buildClaimTx] typeof getAssociatedTokenAddress:', typeof getAssociatedTokenAddress);
+  console.log('[buildClaimTx] typeof createAssociatedTokenAccountInstruction:', typeof createAssociatedTokenAccountInstruction);
+  console.log('[buildClaimTx] typeof getAccount:', typeof getAccount);
+  console.log('[buildClaimTx] typeof getConnection:', typeof getConnection);
+  console.log('[buildClaimTx] typeof getProgram:', typeof getProgram);
+  console.log('[buildClaimTx] typeof getGrantPda:', typeof getGrantPda);
+  console.log('[buildClaimTx] typeof getVaultPda:', typeof getVaultPda);
+  console.log('[buildClaimTx] typeof getReceiptPda:', typeof getReceiptPda);
+  console.log('[buildClaimTx] typeof calculatePeriodIndex:', typeof calculatePeriodIndex);
+  console.log('[buildClaimTx] ===== TYPE CHECK END =====');
+  
   const { campaignId, recipientPubkey } = params;
+  
+  // PublicKeyとTransactionが利用可能であることを確認
+  if (typeof PublicKey === 'undefined' || typeof Transaction === 'undefined') {
+    throw new Error('PublicKey or Transaction is not available. Make sure @solana/web3.js is properly imported.');
+  }
+  
   const connection = getConnection();
   const program = getProgram();
 
   // TODO: campaignId から Grant 情報（authority, mint, grantId）を取得
   // 現時点では、ダミー値を使用（実際の実装では API から取得）
   // 例: const grantInfo = await fetchGrantInfoByCampaignId(campaignId);
+  console.log('[buildClaimTx] Creating PublicKey instances...');
+  console.log('[buildClaimTx] typeof PublicKey before new:', typeof PublicKey);
+  console.log('[buildClaimTx] PublicKey constructor:', PublicKey?.constructor?.name);
+  
+  if (typeof PublicKey !== 'function') {
+    throw new Error('PublicKey is not a constructor. typeof PublicKey: ' + typeof PublicKey);
+  }
+  
   const dummyAuthority = new PublicKey('11111111111111111111111111111111');
   const dummyMint = new PublicKey('So11111111111111111111111111111111111111112'); // SOL (devnet)
   const dummyGrantId = BigInt(1);
+  
+  console.log('[buildClaimTx] PublicKey instances created successfully');
 
   // Grant アカウントを取得して period_index を計算
   // TODO: 実際の実装では、Grant アカウントを fetch して start_ts, period_seconds を取得
@@ -77,7 +111,16 @@ export async function buildClaimTx(
   const claimerAta = await getAssociatedTokenAddress(dummyMint, recipientPubkey);
 
   // トランザクションを作成
+  console.log('[buildClaimTx] Creating Transaction...');
+  console.log('[buildClaimTx] typeof Transaction before new:', typeof Transaction);
+  console.log('[buildClaimTx] Transaction constructor:', Transaction?.constructor?.name);
+  
+  if (typeof Transaction !== 'function') {
+    throw new Error('Transaction is not a constructor. typeof Transaction: ' + typeof Transaction);
+  }
+  
   const tx = new Transaction();
+  console.log('[buildClaimTx] Transaction created successfully');
 
   // ATA が存在しない場合は作成命令を追加
   try {

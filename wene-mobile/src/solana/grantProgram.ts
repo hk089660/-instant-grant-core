@@ -36,6 +36,11 @@ export const getGrantPda = (
   grantId: bigint,
   programId: PublicKey = GRANT_PROGRAM_ID
 ): [PublicKey, number] => {
+  // Bufferが利用可能であることを確認
+  if (typeof Buffer === 'undefined' || !Buffer.alloc) {
+    throw new Error('Buffer is not available. Make sure Buffer polyfill is loaded.');
+  }
+  
   const grantIdBytes = Buffer.alloc(8);
   grantIdBytes.writeBigUInt64LE(grantId, 0);
   
@@ -72,6 +77,11 @@ export const getReceiptPda = (
   periodIndex: bigint,
   programId: PublicKey = GRANT_PROGRAM_ID
 ): [PublicKey, number] => {
+  // Bufferが利用可能であることを確認
+  if (typeof Buffer === 'undefined' || !Buffer.alloc) {
+    throw new Error('Buffer is not available. Make sure Buffer polyfill is loaded.');
+  }
+  
   const periodIndexBytes = Buffer.alloc(8);
   periodIndexBytes.writeBigUInt64LE(periodIndex, 0);
   

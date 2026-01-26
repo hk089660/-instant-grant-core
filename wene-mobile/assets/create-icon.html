@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+const canvas = document.createElement('canvas');
+canvas.width = 1024;
+canvas.height = 1024;
+const ctx = canvas.getContext('2d');
+
+// 虹のグラデーション
+const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+gradient.addColorStop(0, '#ff0000');
+gradient.addColorStop(0.166, '#ff7f00');
+gradient.addColorStop(0.333, '#ffff00');
+gradient.addColorStop(0.5, '#00ff00');
+gradient.addColorStop(0.666, '#0000ff');
+gradient.addColorStop(0.833, '#4b0082');
+gradient.addColorStop(1, '#9400d3');
+
+// 外側の虹の円
+ctx.fillStyle = gradient;
+ctx.beginPath();
+ctx.arc(512, 512, 480, 0, Math.PI * 2);
+ctx.fill();
+
+// 白い円
+ctx.fillStyle = '#ffffff';
+ctx.beginPath();
+ctx.arc(512, 512, 400, 0, Math.PI * 2);
+ctx.fill();
+
+// 内側の虹の円
+ctx.fillStyle = gradient;
+ctx.beginPath();
+ctx.arc(512, 512, 320, 0, Math.PI * 2);
+ctx.fill();
+
+// ダウンロード
+const link = document.createElement('a');
+link.download = 'icon.png';
+link.href = canvas.toDataURL('image/png');
+link.click();
+</script>
+</head>
+<body>Open this file in a browser to generate icon.png</body>
+</html>

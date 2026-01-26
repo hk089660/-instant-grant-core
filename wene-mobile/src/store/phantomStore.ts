@@ -1,12 +1,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as nacl from 'tweetnacl';
-
-// Base64エンコード（React Native用）
-const base64Encode = (bytes: Uint8Array): string => {
-  const binary = Array.from(bytes, byte => String.fromCharCode(byte)).join('');
-  return btoa(binary);
-};
+import bs58 from 'bs58';
 
 interface PhantomStore {
   // 暗号化キーペア
@@ -34,9 +29,10 @@ export const usePhantomStore = create<PhantomStore>((set, get) => ({
   
   initializeKeyPair: () => {
     const keyPair = nacl.box.keyPair();
+    // dapp_encryption_public_keyはbs58エンコードされたCurve25519公開鍵（32バイト）
     set({
       encryptionKeyPair: keyPair,
-      dappEncryptionPublicKey: base64Encode(keyPair.publicKey),
+      dappEncryptionPublicKey: bs58.encode(keyPair.publicKey),
       dappSecretKey: keyPair.secretKey,
     });
     return keyPair;
@@ -56,9 +52,10 @@ export const usePhantomStore = create<PhantomStore>((set, get) => ({
       secretKey: Array.from(keyPair.secretKey),
     };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    // dapp_encryption_public_keyはbs58エンコードされたCurve25519公開鍵（32バイト）
     set({
       encryptionKeyPair: keyPair,
-      dappEncryptionPublicKey: base64Encode(keyPair.publicKey),
+      dappEncryptionPublicKey: bs58.encode(keyPair.publicKey),
       dappSecretKey: keyPair.secretKey,
     });
   },
@@ -74,9 +71,10 @@ export const usePhantomStore = create<PhantomStore>((set, get) => ({
         publicKey: Uint8Array.from(data.publicKey),
         secretKey: Uint8Array.from(data.secretKey),
       };
+      // dapp_encryption_public_keyはbs58エンコードされたCurve25519公開鍵（32バイト）
       set({
         encryptionKeyPair: keyPair,
-        dappEncryptionPublicKey: base64Encode(keyPair.publicKey),
+        dappEncryptionPublicKey: bs58.encode(keyPair.publicKey),
         dappSecretKey: keyPair.secretKey,
       });
       return keyPair;

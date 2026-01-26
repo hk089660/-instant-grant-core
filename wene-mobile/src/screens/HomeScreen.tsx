@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button } from '../ui/components';
 import { theme } from '../ui/theme';
 
@@ -23,7 +24,7 @@ export const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <View style={styles.content}>
         <AppText variant="h1" style={styles.title}>
           We-ne
@@ -46,7 +47,7 @@ export const HomeScreen: React.FC = () => {
           </AppText>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

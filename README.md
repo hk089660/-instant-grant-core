@@ -16,13 +16,15 @@
 
 **Demo Video**:
 
-[📹 Watch Demo Video](https://github.com/hk089660/-instant-grant-core/raw/feature/japan-use-cases/docs/demo.mp4)
+👉 **[📹 Download / Watch Demo Video (MP4, 11MB)](https://github.com/hk089660/-instant-grant-core/raw/feature/japan-use-cases/docs/demo.mp4)**
 
-> **Note**: Click the link above to download and view the demo video. The video shows the complete user flow from wallet connection to claiming benefits.
+**Alternative links**:
+- [View on GitHub](https://github.com/hk089660/-instant-grant-core/blob/feature/japan-use-cases/docs/demo.mp4) (click "Download" button)
+- Direct download: Right-click the link above and select "Save As"
 
-**日本語**: デモ動画では、モバイルアプリからPhantomウォレットを接続し、給付プログラムに接続して受給する一連の流れを確認できます。
+**日本語**: デモ動画では、モバイルアプリからPhantomウォレットを接続し、給付プログラムに接続して受給する一連の流れを確認できます。上記のリンクをクリックして動画をダウンロードまたは再生してください。
 
-**English**: The demo video shows the complete flow of connecting a Phantom wallet from the mobile app, accessing a grant program, and claiming benefits.
+**English**: The demo video shows the complete flow of connecting a Phantom wallet from the mobile app, accessing a grant program, and claiming benefits. Click the link above to download or play the video.
 
 **What the demo shows**:
 1. Opening the mobile app and connecting Phantom wallet

@@ -16,7 +16,9 @@
 
 **Demo Video**:
 
-https://github.com/hk089660/-instant-grant-core/blob/feature/japan-use-cases/docs/demo.mp4
+[📹 Watch Demo Video](https://github.com/hk089660/-instant-grant-core/raw/feature/japan-use-cases/docs/demo.mp4)
+
+> **Note**: Click the link above to download and view the demo video. The video shows the complete user flow from wallet connection to claiming benefits.
 
 **日本語**: デモ動画では、モバイルアプリからPhantomウォレットを接続し、給付プログラムに接続して受給する一連の流れを確認できます。
 

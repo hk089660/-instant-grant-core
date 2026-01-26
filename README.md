@@ -9,6 +9,14 @@
 
 ---
 
+## Overview
+
+**日本語**: We-neは、Solana上で「即時に配布・即時に利用できる」支援クレジット基盤です。FairScaleのレピュテーションを用いて、不正や濫用を抑えつつ、モバイルから誰でもアクセスできます。現在はプロトタイプ段階で、Phantom連携と基本フローが動作しています。
+
+**English**: We-ne is an instant distribution and instant usage support credit infrastructure built on Solana. Using FairScale's reputation system, it prevents fraud and abuse while enabling mobile access for everyone. Currently in prototype stage, with Phantom integration and basic flow operational.
+
+---
+
 ## 🎯 What is we-ne?
 
 we-ne is a **non-custodial benefit distribution system** built on Solana, designed to deliver support payments instantly and transparently.

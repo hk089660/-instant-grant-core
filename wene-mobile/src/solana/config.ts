@@ -1,43 +1,55 @@
-import { Connection, Cluster, PublicKey } from '@solana/web3.js';
-import { Platform } from 'react-native';
+/**
+ * Solana Configuration
+ * 
+ * 【安定性のポイント】
+ * - Program ID は一箇所で定義（Anchor.toml, declare_id!() と一致）
+ * - Cluster は devnet 固定（環境変数で切り替えない）
+ * - Connection は singleton.ts で管理
+ */
+
+import { PublicKey, Cluster, clusterApiUrl } from '@solana/web3.js';
+
+// ============================================================
+// Program ID（固定）
+// ============================================================
 
 /**
  * Grant Program ID
+ * 
+ * 【一致確認済み】
+ * - Anchor.toml: grant_program = "8SVRtAyWXcd47PKeeMSGpC1oQFNt2yM865M46QgjKUZ"
+ * - declare_id!("8SVRtAyWXcd47PKeeMSGpC1oQFNt2yM865M46QgjKUZ")
+ * - IDL address: "8SVRtAyWXcd47PKeeMSGpC1oQFNt2yM865M46QgjKUZ"
  */
-export const GRANT_PROGRAM_ID = new PublicKey('8SVRtAyWXcd47PKeeMSGpC1oQFNt2yM865M46QgjKUZ');
+export const GRANT_PROGRAM_ID = new PublicKey(
+  '8SVRtAyWXcd47PKeeMSGpC1oQFNt2yM865M46QgjKUZ'
+);
+
+// ============================================================
+// Cluster 設定（devnet 固定）
+// ============================================================
 
 /**
- * Solana RPC接続先（環境変数から取得、デフォルトはdevnet）
+ * Cluster は devnet 固定
+ * 環境変数や条件分岐で切り替えない
  */
-export const getRpcUrl = (): string => {
-  // #region agent log
-  const envRpc = process.env.SOLANA_RPC_URL;
-  const rpcUrl = envRpc || 'https://api.devnet.solana.com';
-  fetch('http://127.0.0.1:7242/ingest/2e86959c-0542-444e-a106-629fb6908b3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'config.ts:13',message:'getRpcUrl called',data:{platform:Platform.OS,hasEnvRpc:envRpc!==undefined,envRpc,rpcUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-  // #endregion
-  // 環境変数から取得（未設定の場合はdevnet）
-  return rpcUrl;
-};
+export const CLUSTER: Cluster = 'devnet';
 
 /**
- * Solana接続を作成
+ * RPC URL（devnet 固定）
  */
-export const createConnection = (): Connection => {
-  const rpcUrl = getRpcUrl();
-  return new Connection(rpcUrl, 'confirmed');
-};
+export const RPC_URL: string = clusterApiUrl(CLUSTER);
+
+// ============================================================
+// 後方互換性のための関数（非推奨）
+// ============================================================
 
 /**
- * クラスター名を取得
+ * @deprecated singleton.ts の getConnection() を使用してください
  */
-export const getCluster = (): Cluster => {
-  const rpcUrl = getRpcUrl();
-  if (rpcUrl.includes('devnet')) {
-    return 'devnet';
-  } else if (rpcUrl.includes('testnet')) {
-    return 'testnet';
-  } else if (rpcUrl.includes('mainnet')) {
-    return 'mainnet-beta';
-  }
-  return 'devnet';
-};
+export const getRpcUrl = (): string => RPC_URL;
+
+/**
+ * @deprecated CLUSTER 定数を直接使用してください
+ */
+export const getCluster = (): Cluster => CLUSTER;

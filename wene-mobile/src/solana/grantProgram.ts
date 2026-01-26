@@ -1,7 +1,13 @@
-// Anchor Program SDK
-// 注意: 実際の実装では、IDLファイルを読み込んでProgramインスタンスを作成する必要があります
+/**
+ * Grant Program SDK
+ * 
+ * 【安定性のポイント】
+ * - Program ID は config.ts から一元取得
+ * - Connection は singleton を使用
+ * - PDA 計算は純粋関数（副作用なし）
+ */
+
 import {
-  Connection,
   PublicKey,
   Transaction,
 } from '@solana/web3.js';
@@ -11,21 +17,13 @@ import {
   getAccount,
 } from '@solana/spl-token';
 
-// Program ID
+// Program ID は config.ts から一元取得
 import { GRANT_PROGRAM_ID } from './config';
+import { getConnection } from './singleton';
 
-// IDL型定義（簡易版 - 実際のIDLから生成することを推奨）
-export interface GrantProgram {
-  version: string;
-  name: string;
-  instructions: Array<{
-    name: string;
-    accounts: Array<any>;
-    args: Array<any>;
-  }>;
-  accounts: Array<any>;
-  types: Array<any>;
-}
+// ============================================================
+// PDA 計算（純粋関数）
+// ============================================================
 
 /**
  * Grant PDAを計算
@@ -86,6 +84,10 @@ export const getReceiptPda = (
   );
 };
 
+// ============================================================
+// ユーティリティ関数
+// ============================================================
+
 /**
  * 現在のperiod_indexを計算
  */
@@ -102,12 +104,18 @@ export const calculatePeriodIndex = (
   return elapsed / periodSeconds;
 };
 
+// ============================================================
+// トランザクション構築
+// ============================================================
+
 /**
  * Claim Grantトランザクションを構築
- * 注意: 署名は呼び出し側で行う（Phantomなど）
+ * 
+ * 【安定性】
+ * - Connection は singleton を使用
+ * - 署名は呼び出し側で行う（Phantomなど）
  */
 export const buildClaimGrantTransaction = async (
-  connection: Connection,
   claimer: PublicKey,
   params: {
     authority: PublicKey;
@@ -116,12 +124,13 @@ export const buildClaimGrantTransaction = async (
     periodIndex: bigint;
   }
 ): Promise<Transaction> => {
+  const connection = getConnection();
   const { authority, mint, grantId, periodIndex } = params;
   
   // PDAを計算
   const [grantPda] = getGrantPda(authority, mint, grantId);
-  const [vaultPda] = getVaultPda(grantPda);
-  const [receiptPda] = getReceiptPda(grantPda, claimer, periodIndex);
+  const [_vaultPda] = getVaultPda(grantPda);
+  const [_receiptPda] = getReceiptPda(grantPda, claimer, periodIndex);
   
   // 受給者のATAを取得/作成
   const claimerAta = await getAssociatedTokenAddress(mint, claimer);
@@ -142,26 +151,11 @@ export const buildClaimGrantTransaction = async (
     );
   }
   
-  // 注意: 実際の実装では、Anchor ProgramのIDLを使って
-  // program.methods.claimGrant(periodIndex).accounts({...}).instruction()
-  // を呼び出す必要があります。
-  // ここではスタブとして、空のトランザクションを返します。
-  
-  // TODO: Anchor ProgramのIDLを読み込んで、実際のinstructionを構築
-  // const program = new Program(idl, GRANT_PROGRAM_ID, provider);
+  // TODO: Anchor ProgramのIDLを使って実際のinstructionを構築
+  // const program = getProgram();
   // const instruction = await program.methods
   //   .claimGrant(new BN(periodIndex.toString()))
-  //   .accounts({
-  //     grant: grantPda,
-  //     mint,
-  //     vault: vaultPda,
-  //     claimer,
-  //     claimerAta,
-  //     receipt: receiptPda,
-  //     tokenProgram: TOKEN_PROGRAM_ID,
-  //     systemProgram: SystemProgram.programId,
-  //     rent: SYSVAR_RENT_PUBKEY,
-  //   })
+  //   .accounts({ ... })
   //   .instruction();
   // transaction.add(instruction);
   
@@ -169,10 +163,12 @@ export const buildClaimGrantTransaction = async (
 };
 
 /**
- * Grant情報を取得（簡易版）
+ * Grant情報を取得
+ * 
+ * 【安定性】
+ * - Connection は singleton を使用
  */
 export const fetchGrantInfo = async (
-  connection: Connection,
   authority: PublicKey,
   mint: PublicKey,
   grantId: bigint
@@ -188,20 +184,36 @@ export const fetchGrantInfo = async (
     const [grantPda] = getGrantPda(authority, mint, grantId);
     const [vaultPda] = getVaultPda(grantPda);
     
-    // 注意: 実際の実装では、Anchor Programのaccount.fetch()を使う
-    // const program = new Program(idl, GRANT_PROGRAM_ID, provider);
+    // TODO: Anchor Programのaccount.fetch()を使う
+    // const program = getProgram();
     // const grantAccount = await program.account.grant.fetch(grantPda);
     
     // スタブ: ダミーデータを返す
     return {
       grant: grantPda,
       vault: vaultPda,
-      amountPerPeriod: BigInt(1000), // ダミー
+      amountPerPeriod: BigInt(1000),
       periodSeconds: BigInt(2592000), // 30日
-      startTs: BigInt(Math.floor(Date.now() / 1000) - 86400), // 1日前
-      expiresAt: BigInt(0), // 無期限
+      startTs: BigInt(Math.floor(Date.now() / 1000) - 86400),
+      expiresAt: BigInt(0),
     };
   } catch {
     return null;
   }
 };
+
+// ============================================================
+// 型定義（後方互換性）
+// ============================================================
+
+export interface GrantProgram {
+  version: string;
+  name: string;
+  instructions: Array<{
+    name: string;
+    accounts: Array<any>;
+    args: Array<any>;
+  }>;
+  accounts: Array<any>;
+  types: Array<any>;
+}

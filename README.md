@@ -20,6 +20,20 @@
 
 ---
 
+## Status and Using This Repo / ステータスとご利用にあたって
+
+**日本語**: このプロジェクトは初期段階のプロトタイプです。審査や検証のためのデモ・検証用であり、本番運用は想定していません。
+
+**English**: This project is an early-stage prototype. It is for demo and validation (e.g. grant review), not production use.
+
+- **現在動作しているもの / What works now**: スマートコントラクト（Anchor）による給付プログラムの作成・入金・受給・停止、モバイルアプリ（Phantom連携・Deep Link・受給フロー）は一通り動作しています。 — Smart contract (Anchor): grant create, fund, claim, pause/resume. Mobile app: Phantom integration, deep links, claim flow.
+- **未実装・今後の予定 / Not implemented (planned)**: Allowlist（Merkle Tree）のオンチェーン統合、FairScale連携、管理者用UI、他ウォレット対応、監査・本番インフラは未対応です。 — On-chain allowlist (Merkle Tree), FairScale, admin UI, other wallets, audit, production infra are not yet available.
+- **ビルド・実行の失敗について / Build and run failures**: 環境差によるビルド失敗や実行失敗は、現時点では想定内です。環境が異なると依存関係やツールのバージョンで失敗することがあります。失敗した場合は Issue や Discussions で状況を共有してもらえると助かります。 — Build or run failures due to environment differences are expected at this stage. If something fails, sharing your setup in Issues or Discussions helps.
+- **環境チェック（doctor） / Environment check (doctor)**: モバイルアプリ（`wene-mobile`）では、セットアップ前やビルド前に環境を確認する doctor スクリプトの利用を推奨します。`npm run doctor` で不足している依存・設定を検出し、`npm run doctor:fix` で自動修正できる場合があります。初回セットアップ時・ビルドが通らない時に実行すると、原因の切り分けがしやすくなります。 — In `wene-mobile`, run the doctor script before setup or build: `npm run doctor` to detect missing deps/settings, `npm run doctor:fix` to auto-fix when possible. Run it on first setup or when a build fails to narrow down the cause.
+- **セットアップ / Setup**: 以下「Quickstart」は必要最小限の手順です。詳細は各サブディレクトリの README を参照してください。 — The Quickstart below is minimal. See each subdirectory’s README for details.
+
+---
+
 ## Demo
 
 **Demo Video**:
@@ -149,6 +163,10 @@ This is a **prototype/research demo**. Production deployment requires security a
 
 ## Current Status
 
+**日本語**: 以下は「いま動いている機能」と「未実装・今後の予定」を分けた一覧です。
+
+**English**: Below: what works now vs. what is not yet implemented (or planned).
+
 ### ✅ Implemented (MVP)
 
 **Smart Contract** (`grant_program/`):
@@ -179,6 +197,10 @@ This is a **prototype/research demo**. Production deployment requires security a
 ---
 
 ## Quickstart
+
+**日本語**: 以下は最小限の手順です。環境によってはビルドや実行が失敗することがあります。その場合は `wene-mobile` で `npm run doctor` を実行して環境を確認してください。
+
+**English**: The steps below are minimal. Build or run may fail depending on your environment. If it does, run `npm run doctor` in `wene-mobile` to check your setup.
 
 ### Prerequisites
 

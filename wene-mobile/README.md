@@ -1,16 +1,57 @@
 # We-ne Mobile
 
-React Native（Expo + TypeScript）アプリ - 受給者向けUI
+React Native（Expo + TypeScript）アプリ - 受給者向けUI  
+Recipient-facing app built with React Native (Expo + TypeScript).
 
-## セットアップ
+---
+
+## Status / ステータス
+
+**日本語**: このアプリはプロトタイプです。デモ・検証用であり、環境差によるビルド失敗や実行失敗は現時点では想定内です。失敗した場合は Issue や Discussions で状況を共有してもらえると助かります。
+
+**English**: This app is a prototype for demo and validation. Build or run failures due to environment differences are expected at this stage. If something fails, sharing your setup in Issues or Discussions helps.
+
+- **現在動作しているもの / What works now**: Phantom連携、Deep Link（`wene://r/<campaignId>`）、給付プログラムへの接続と受給フロー、Android / iOS 向けビルド。 — Phantom integration, deep links, grant connection and claim flow, Android / iOS builds.
+- **未実装・今後の予定 / Not implemented (planned)**: 他ウォレット対応、管理者用画面、オフライン対応などは未対応です。 — Other wallets, admin screens, offline support are not yet available.
+
+---
+
+## Environment check (doctor) / 環境チェック（doctor）
+
+**日本語**: 環境の違いでビルドや実行が失敗することがあるため、**セットアップ前**および**ビルドが通らないとき**に、環境チェック用の doctor スクリプトの実行を推奨します。
+
+**English**: Because build or run can fail depending on your environment, run the doctor script **before setup** and **when a build fails**.
+
+- **いつ実行するか / When to run**: 初回セットアップ時、`npm install` のあと。あるいは、`npm run build:prebuild` や `npm run build:apk` が失敗したときの原因切り分けとして。 — After first-time `npm install`, or when `npm run build:prebuild` / `npm run build:apk` fails, to narrow down the cause.
+- **何をするか / What it does**: 依存関係の有無、必須ファイル・設定（例: `local.properties`、アイコンアセット）の有無、よくある不整合を検出します。`npm run doctor:fix` で自動修正できる項目もあります。 — Detects missing deps, required files/settings (e.g. `local.properties`, icon assets), and common issues. `npm run doctor:fix` can auto-fix some of them.
+- **コマンド / Commands**: `npm run doctor`（チェックのみ / check only）、`npm run doctor:fix`（修正可能な項目を自動修正 / auto-fix when possible）。
+
+**日本語**: doctor を実行すると、ビルド失敗の原因が「環境不足」か「コード・設定」かの切り分けがしやすくなります。
+
+**English**: Running doctor helps tell whether a build failure is due to the environment or to code/config.
+
+---
+
+## セットアップ / Setup
+
+**日本語**: 最小限の手順です。初回は環境チェック（上記 doctor）の実行を推奨します。
+
+**English**: Minimal steps. Running the doctor script (above) on first setup is recommended.
 
 ```bash
 # 依存関係のインストール
 npm install
 
-# アプリの起動
+# （推奨）環境チェック。問題があれば npm run doctor:fix で修正を試す / (Recommended) Run doctor; use npm run doctor:fix if needed
+npm run doctor
+
+# アプリの起動 / Start app
 npm start
 ```
+
+**日本語**: ネイティブプロジェクト（Android/iOS）を生成してビルドする場合は、ルートの README の Quickstart または下記「APK の書き出し」を参照してください。
+
+**English**: For native Android/iOS build, see the root README Quickstart or the "APK の書き出し" section below.
 
 ## ディレクトリ構成
 

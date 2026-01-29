@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:contract && npm run build:mobile",
     "build:contract": "cd grant_program && anchor build",
-    "build:mobile": "cd wene-mobile && npm install && npx tsc --noEmit",
+    "build:mobile": "cd wene-mobile && npm install --legacy-peer-deps && npx tsc --noEmit",
     "test": "npm run test:contract",
     "test:contract": "cd grant_program && anchor test",
     "test:mobile": "cd wene-mobile && npx tsc --noEmit",

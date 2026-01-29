@@ -123,7 +123,7 @@ we-ne provides:
 
 ### One-command build (for contributors / third parties)
 
-From the **repository root** you can build and test everything without entering each subproject:
+From the **repository root** you can build and test everything without entering each subproject. The steps below are verified in a third-party environment.
 
 ```bash
 git clone https://github.com/<owner>/we-ne.git
@@ -141,14 +141,24 @@ chmod +x scripts/build-all.sh
 ./scripts/build-all.sh test   # contract tests only
 ```
 
-See [Development Guide](./docs/DEVELOPMENT.md) for per-component setup and [Recent changes](#-recent-changes) for what was added for third-party builds.
+**What success looks like**
+
+| Step | Result |
+|------|--------|
+| `npm run build` / `build-all.sh build` | Contract builds with `anchor build`; mobile passes `npm install` + `tsc --noEmit` |
+| `npm run test` / `build-all.sh test` | Anchor tests (e.g. create_grant, fund_grant, claimer can claim once per period) pass |
+| `build-all.sh all` | All of the above; ends with "✅ Done." |
+
+**Dependency note (mobile)**  
+The mobile app (`wene-mobile`) can hit npm peer dependency errors due to React/react-dom version mismatch. The repo uses `wene-mobile/.npmrc` (`legacy-peer-deps=true`) and `--legacy-peer-deps` in root scripts and CI, so **you can run the root build and CI as-is**. For mobile-only setup, use `npm install --legacy-peer-deps` as in "Run Mobile App" below.
+
+See [Development Guide](./docs/DEVELOPMENT.md) for per-component setup and [Recent changes](#-recent-changes-third-party-build-improvements) for what was added for third-party builds.
 
 ### Run Mobile App (Development)
 
 ```bash
-# Clone repository
-git clone https://github.com/hk089660/-instant-grant-core.git
-cd we-ne/wene-mobile
+# From repo root (after cloning — see "One-command build" above)
+cd wene-mobile
 
 # One-command setup (recommended)
 npm run setup
@@ -165,6 +175,7 @@ npm start
 ### Build Android APK
 
 ```bash
+# From repo root
 cd wene-mobile
 npm run build:apk
 
@@ -188,6 +199,7 @@ The doctor checks: dependencies, polyfills, SafeArea configuration, Phantom inte
 ### Build Smart Contract
 
 ```bash
+# From repo root
 cd grant_program
 anchor build
 anchor test
@@ -302,6 +314,7 @@ To make the project easier to build and verify for contributors and third partie
 
 - **Root-level scripts**: Added `package.json` at repo root with `npm run build` (contract + mobile typecheck) and `npm run test` (Anchor tests). Use `npm run build:contract`, `npm run build:mobile`, `npm run test:contract` for per-component runs.
 - **Unified build script**: Added `scripts/build-all.sh` so you can run `./scripts/build-all.sh all` (or `build` / `test`) without installing Node at root.
+- **Third-party build verification**: Confirmed that the above steps build and test successfully in a fresh environment. Mobile React/react-dom peer dependency handling: `wene-mobile/.npmrc` (`legacy-peer-deps=true`) and `--legacy-peer-deps` in root scripts and CI.
 - **CI**: Added `.github/workflows/ci.yml` so every push/PR runs Anchor build & test and mobile install & TypeScript check. The CI badge in this README reflects that workflow once the repo is on GitHub.
 - **Docs**: [Development Guide](./docs/DEVELOPMENT.md) updated with root-level build/test and CI usage.
 - **Double-claim fix**: In `grant_program`, the claim receipt account was changed from `init_if_needed` to `init`. This correctly rejects a second claim in the same period (receipt PDA already exists, so `init` fails). All Anchor tests, including "claimer can claim once per period", now pass.

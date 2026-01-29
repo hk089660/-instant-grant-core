@@ -115,7 +115,7 @@ we-ne provides:
 
 ### 第三者・コントリビュータ向け：一括ビルド
 
-**リポジトリルート**から、各サブプロジェクトに入らずにビルド・テストできます。
+**リポジトリルート**から、各サブプロジェクトに入らずにビルド・テストできます。以下は第三者環境での検証済み手順です。
 
 ```bash
 git clone https://github.com/<owner>/we-ne.git
@@ -133,14 +133,28 @@ chmod +x scripts/build-all.sh
 ./scripts/build-all.sh test   # コントラクトテストのみ
 ```
 
+**成功時の目安**
+
+| 手順 | 内容 |
+|------|------|
+| `npm run build` / `build-all.sh build` | コントラクトが `anchor build` でビルドされ、モバイルが `npm install` + `tsc --noEmit` で型チェックまで完了する |
+| `npm run test` / `build-all.sh test` | `grant_program` の Anchor テスト（例: create_grant, fund_grant, claimer can claim once per period）が通る |
+| `build-all.sh all` | 上記ビルド・テスト・モバイル型チェックを一括で実行し、最後に「✅ Done.」と表示される |
+
+**依存関係について（モバイル）**  
+モバイルアプリ（`wene-mobile`）では、React と react-dom のバージョン差により npm のピア依存チェックでエラーになる場合があります。リポジトリでは次の対応をしているため、**ルートからのビルドや CI はそのまま実行すれば問題ありません**。
+
+- `wene-mobile/.npmrc` に `legacy-peer-deps=true` を設定
+- ルートの `npm run build` と `scripts/build-all.sh` ではモバイルの install に `--legacy-peer-deps` を付与
+- モバイルのみ手動でセットアップする場合は `npm install --legacy-peer-deps` を使用（README の「Run Mobile App」のとおり）
+
 詳細は [Development Guide](./docs/DEVELOPMENT.md)、[変更内容](#-変更内容第三者ビルド改善) を参照してください。
 
 ### Run Mobile App (Development)
 
 ```bash
-# Clone repository
-git clone https://github.com/hk089660/-instant-grant-core.git
-cd we-ne/wene-mobile
+# リポジトリをクローン済みの場合（上記「一括ビルド」を参照）
+cd wene-mobile
 
 # One-command setup (recommended)
 npm run setup
@@ -157,6 +171,7 @@ npm start
 ### Build Android APK
 
 ```bash
+# リポジトリルートから
 cd wene-mobile
 npm run build:apk
 
@@ -180,6 +195,7 @@ The doctor checks: dependencies, polyfills, SafeArea configuration, Phantom inte
 ### Build Smart Contract
 
 ```bash
+# リポジトリルートから
 cd grant_program
 anchor build
 anchor test
@@ -294,6 +310,7 @@ Priority areas:
 
 - **ルートスクリプト**: リポジトリルートに `package.json` を追加。`npm run build`（コントラクト + モバイル型チェック）と `npm run test`（Anchor テスト）を実行可能。`npm run build:contract` / `npm run build:mobile` / `npm run test:contract` で個別実行も可能。
 - **一括ビルドスクリプト**: `scripts/build-all.sh` を追加。ルートに Node を入れずに `./scripts/build-all.sh all`（または `build` / `test`）で実行可能。
+- **第三者ビルドの検証**: 上記手順で第三者環境からビルド・テストが通ることを確認。モバイルの react/react-dom ピア依存対策として `wene-mobile/.npmrc`（`legacy-peer-deps=true`）と、ルート・CI での `--legacy-peer-deps` を導入済み。
 - **CI**: `.github/workflows/ci.yml` を追加。push/PR のたびに Anchor のビルド・テストとモバイルのインストール・TypeScript チェックを実行。README の CI バッジはこのワークフローを指します。
 - **ドキュメント**: [Development Guide](./docs/DEVELOPMENT.md) にルートからのビルド・テスト手順と CI の説明を追記。
 - **二重 claim 防止の修正**: `grant_program` で claim 用レシートアカウントを `init_if_needed` から `init` に変更。同一期間での2回目の claim が正しく拒否されるようになった（receipt PDA が既に存在するため `init` が失敗）。Anchor の全テスト（「claimer can claim once per period」含む）がパスする状態です。

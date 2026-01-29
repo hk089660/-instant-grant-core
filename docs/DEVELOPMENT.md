@@ -49,7 +49,7 @@ chmod +x scripts/build-all.sh
 git clone https://github.com/<owner>/we-ne.git
 cd we-ne
 
-# Install mobile app dependencies
+# Install mobile app dependencies (uses wene-mobile/.npmrc for legacy-peer-deps)
 cd wene-mobile
 npm install
 
@@ -57,12 +57,14 @@ npm install
 npm start
 ```
 
+If you see peer dependency errors in `wene-mobile`, use `npm install --legacy-peer-deps`; root build scripts and CI already apply this.
+
 ## CI (GitHub Actions)
 
 On every push/PR to `main` or `master`, [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs:
 
 - **Smart contract**: Install Rust, Solana CLI, Anchor → `grant_program`: `yarn install`, `anchor build`, `anchor test`
-- **Mobile app**: Node 20 → `wene-mobile`: `npm ci`, `npx tsc --noEmit`
+- **Mobile app**: Node 20 → `wene-mobile`: `npm ci --legacy-peer-deps`, `npx tsc --noEmit`
 
 No secrets required. The README CI badge reflects this workflow once the repo is on GitHub.
 
@@ -139,7 +141,7 @@ anchor deploy --provider.cluster devnet
 
 ```bash
 cd wene-mobile
-npm install
+npm install   # or npm install --legacy-peer-deps if you see peer dependency errors
 ```
 
 ### Development Server

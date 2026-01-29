@@ -86,7 +86,17 @@ we-ne provides:
 
 ## 📱 Demo
 
-> 🎬 **Video demo**: [https://x.com/Shiki93278/status/2015659939356889450]
+デモ動画は **X（旧Twitter）** の投稿で公開しています。  
+**Demo video** is posted on **X (formerly Twitter)**.
+
+> 🎬 **デモ動画 / Demo video**: [X で見る / Watch on X](https://x.com/Shiki93278/status/2015659939356889450)
+
+**What the demo shows**（動画の内容）:
+1. Opening the mobile app and connecting Phantom wallet
+2. Scanning QR code or opening deep link (`wene://r/<campaignId>`)
+3. Viewing grant details (amount, period, eligibility)
+4. Tapping "Claim" → Phantom wallet signing the transaction
+5. SPL tokens being transferred to recipient's wallet within seconds
 
 ### Screenshots
 

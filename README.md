@@ -94,23 +94,10 @@ we-ne provides:
 
 ## 📱 Demo
 
-**Demo Video**:
+デモ動画は **X（旧Twitter）** の投稿で公開しています。  
+**Demo video** is posted on **X (formerly Twitter)**.
 
-<div align="center">
-
-**[📹 デモ動画を見る / Watch Demo Video (11MB)](https://github.com/hk089660/-instant-grant-core/raw/main/docs/demo.mp4)**
-
-*Click the link above to watch the demo video*
-
-</div>
-
-⚠️ **Note**: The demo link will directly download a short MP4 file (≈11 MB). This is intentional to allow offline review without external video platforms.
-
-⚠️ **注意**: デモリンクは直接MP4ファイル（約11MB）をダウンロードします。これは外部動画プラットフォームを使わずにオフラインで確認できるようにするための意図的な動作です。
-
-**日本語**: 上記のリンクをクリックすると、モバイルアプリからPhantomウォレットを接続し、給付プログラムに接続して受給する一連の流れを確認できるデモ動画が表示されます。
-
-**English**: Click the link above to watch a demo video showing the complete flow of connecting a Phantom wallet from the mobile app, accessing a grant program, and claiming benefits.
+> 🎬 **デモ動画 / Demo video**: [X で見る / Watch on X](https://x.com/Shiki93278/status/2015659939356889450)
 
 **What the demo shows**:
 1. Opening the mobile app and connecting Phantom wallet

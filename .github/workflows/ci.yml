@@ -10,7 +10,7 @@ on:
 
 env:
   SOLANA_VERSION: "1.18.0"
-  ANCHOR_VERSION: "0.31.2"
+  ANCHOR_VERSION: "0.31.1"
   NODE_VERSION: "20"
 
 jobs:
@@ -30,39 +30,21 @@ jobs:
         with:
           workspaces: grant_program
 
-      - name: Install Solana CLI
-        run: |
-          sh -c "$(curl -sSfL https://release.solana.com/v${{ env.SOLANA_VERSION }}/install)"
-          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
-          solana --version
-
-      - name: Install Anchor
-        run: |
-          cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
-          avm install ${{ env.ANCHOR_VERSION }}
-          avm use ${{ env.ANCHOR_VERSION }}
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          echo "$HOME/.avm/bin" >> $GITHUB_PATH
-          export PATH="$HOME/.cargo/bin:$HOME/.avm/bin:$PATH"
-          anchor --version
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Anchor (Solana + Node + Anchor CLI)
+        uses: metaDAOproject/setup-anchor@v3.3
         with:
+          anchor-version: ${{ env.ANCHOR_VERSION }}
+          solana-cli-version: ${{ env.SOLANA_VERSION }}
           node-version: ${{ env.NODE_VERSION }}
-          cache: "yarn"
-          cache-dependency-path: grant_program/yarn.lock
 
-      - name: Install grant_program deps
-        working-directory: grant_program
-        run: yarn install --frozen-lockfile
+      - name: Install yarn and grant_program deps
+        run: |
+          npm install -g yarn
+          cd grant_program && yarn install --frozen-lockfile
 
       - name: Build
         working-directory: grant_program
-        run: |
-          anchor --version
-          anchor build
+        run: anchor build
 
       - name: Test
         working-directory: grant_program

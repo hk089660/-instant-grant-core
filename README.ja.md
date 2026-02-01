@@ -13,6 +13,20 @@
 
 これらの更新は、**学校での実運用を想定した安定性と安全性の向上**を目的としています。
 
+### 最近の更新（School参加フロー刷新）
+
+School参加フローのロジック・型・エラー処理を整理し、差し替えしやすい構造にしました。
+
+- **API層の抽象化**: `SchoolClaimClient` / `SchoolEventProvider` インターフェースで mock と本番実装を分離。`fetch` 版への差し替えが容易。
+- **Hook によるUI/ロジック分離**: `useSchoolClaim` で idle/loading/success/already/error を一元管理。画面は状態と `handleClaim` に依存するだけ。
+- **エラー表現の統一**: `SchoolClaimResult`（Success | Failure）、`SchoolClaimErrorCode`（retryable / invalid_input / not_found）でロジック側の判定が明確。`errorInfo` / `isRetryable` により再試行可能なエラーを判別可能。
+- **eventId の一元化**: `parseEventId` / `useEventIdFromParams` でクエリ・ルートからの取得・検証を集約。無効時は `/u` へ自動リダイレクト。
+- **ルーティングの統一**: `schoolRoutes` 定数で home/events/scan/confirm/success/schoolClaim を一貫して利用。
+- **already の扱い統一**: 既参加（`alreadyJoined`）でも success 画面へ遷移し、体験を一貫。
+- **再試行導線**: retryable エラー時にボタン文言を「再試行」に変更。
+
+→ 詳細は [School参加フロー（アーキテクチャ）](#school参加フローアーキテクチャ) および [wene-mobile/docs/STATIC_VERIFICATION_REPORT.md](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md)
+
 ### 受け取り成功までの動作確認（2025年）
 
 - **Android 実機（APK）**で Phantom 署名 → 送信 → **受け取り完了**まで一連のフローを動作確認済みです。
@@ -25,6 +39,41 @@
 - イベント内容の確認
 - デジタル参加券の発行（Claim）
 - アプリ内で参加券を保持・確認可能
+
+### School参加フロー（アーキテクチャ）
+
+**動線**
+
+1. ホーム → 「参加を開始」→ 参加券一覧（`/u`）
+2. 「参加する」→ スキャン（`/u/scan`）
+3. 「読み取り開始」→ 確認（`/u/confirm?eventId=evt-001`）
+4. 「参加する」→ 参加 API → 成功（`/u/success?eventId=evt-001`）
+5. 「完了」→ 一覧へ戻る
+
+**主要な概念**
+
+| 概念 | 説明 |
+|------|------|
+| `SchoolClaimClient` | 参加申請を送信する API クライアントのインターフェース。mock から fetch 版へ差し替え可能 |
+| `useSchoolClaim` | 参加ロジックをカプセル化した Hook。`status`（idle/loading/success/already/error）、`handleClaim`、`onSuccess` を提供 |
+| `SchoolClaimResult` | 成功時 `{ success: true, eventName, alreadyJoined? }`、失敗時 `{ success: false, error: { code, message } }` の discriminated union |
+| `useEventIdFromParams` | クエリ/ルートから `eventId` を取得・検証。`redirectOnInvalid: true` で無効時に `/u` へ replace |
+| `schoolRoutes` | home/events/scan/confirm/success/schoolClaim のルート定数 |
+
+**Mock ケース（テスト用）**
+
+- evt-001: 成功
+- evt-002: 既参加（`alreadyJoined`）→ success 画面へ遷移
+- evt-003: リトライ可能エラー → 「再試行」で再 claim
+
+**検証結果（静的）**
+
+- TypeScript: `npx tsc --noEmit` ✅
+- `useSchoolClaim` の状態遷移 ✅
+- ルーティング整合（`eventId` は `useEventIdFromParams` に統一）✅
+- 将来の fetch 版実装時: HTTP エラー → Result マッピング（404→not_found、5xx/network→retryable など）を明示すること
+
+→ 詳細は [wene-mobile/docs/STATIC_VERIFICATION_REPORT.md](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md)、[開発ガイド](./docs/DEVELOPMENT.md)、[エミュレータ開発](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
 
 ### 最初の目標ユースケース：学校イベント参加券
 **We-ne** の最初の具体的なユースケースは、  
@@ -56,7 +105,7 @@
 [![CI](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-[英語版 README](./README.md) | [アーキテクチャ](./docs/ARCHITECTURE.md) | [開発ガイド](./docs/DEVELOPMENT.md)
+[英語版 README](./README.md) | [アーキテクチャ](./docs/ARCHITECTURE.md) | [開発ガイド](./docs/DEVELOPMENT.md) | [静的検証レポート](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md) | [エミュレータ開発](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
 
 ---
 
@@ -112,6 +161,25 @@ we-ne は Solana 上で動作する**非保管型の支援配布システム**�
 - **Android は Phantom 内ブラウザでの参加を推奨**: Android では「Phantom → 外部ブラウザへ戻れない」問題があるため、v0 では**生徒用QRの内容を Phantom browse deeplink**（`https://phantom.app/ul/browse/<url>?ref=<ref>`）にし、Phantom の in-app browser で開く導線を主としています。管理者印刷画面（`/admin/print/:eventId`）で表示される URL を QR コード化して印刷してください。
 - **redirect-based connect**: 従来の「ブラウザで開く → Phantom で接続 → ブラウザへリダイレクト」は、環境によっては不安定なため v0 では主導線にしていません。手動復帰用に `/phantom-callback` リンクを用意しています。
 - **生徒用は専用アプリ**: 学校PoC では生徒に iOS（TestFlight）または Android（APK）の専用アプリを配布し、Phantom 接続後にアプリへ確実に復帰する導線を主としています。Web は管理者・補助用です。
+
+---
+
+## ローカル確認コマンド・今後の予定
+
+**ローカルでの型・ビルド確認**
+
+```bash
+# ルートから
+npm run build
+
+# モバイルのみ（TypeScript）
+cd wene-mobile && npx tsc --noEmit
+```
+
+**今後の予定**
+
+- 外出先のため実行環境（Android Emulator / 実機 USB）での動作確認は後日実施
+- 帰宅後に Pixel 8（USB デバッグ）で UI 最終確認を実施予定
 
 ---
 

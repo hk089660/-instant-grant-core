@@ -52,6 +52,7 @@ jobs:
   mobile:
     name: Mobile app (Expo / TypeScript)
     runs-on: ubuntu-latest
+    # School claim flow (useSchoolClaim, schoolRoutes, eventId, Result types) validated via tsc
     steps:
       - uses: actions/checkout@v4
 

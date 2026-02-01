@@ -64,6 +64,11 @@ else
   echo "   ✓ local.properties already exists"
 fi
 
+# エミュレータ用スクリプトに実行権限付与
+chmod +x "$ROOT_DIR/scripts/emulator-adb.sh" 2>/dev/null || true
+chmod +x "$ROOT_DIR/scripts/emulator-check.sh" 2>/dev/null || true
+chmod +x "$ROOT_DIR/scripts/emulator-start.sh" 2>/dev/null || true
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ Setup complete!"

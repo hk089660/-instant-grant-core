@@ -1,20 +1,42 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AppText, Button, Card } from '../../ui/components';
 import { theme } from '../../ui/theme';
 import { setStarted } from '../../data/participationStore';
+import { getClaimMode } from '../../config/claimMode';
+import { useSchoolClaim } from '../../hooks/useSchoolClaim';
+import { schoolRoutes } from '../../lib/schoolRoutes';
+import { useEventIdFromParams } from '../../hooks/useEventIdFromParams';
 
 export const UserConfirmScreen: React.FC = () => {
   const router = useRouter();
-  const { eventId } = useLocalSearchParams<{ eventId?: string }>();
-  const targetEventId = eventId ?? 'evt-001';
+  const { eventId: targetEventId, isValid } = useEventIdFromParams({ redirectOnInvalid: true });
+  const isSchoolMode = getClaimMode() === 'school';
+  const onClaimSuccess = useCallback(
+    () => targetEventId && router.push(schoolRoutes.success(targetEventId) as any),
+    [router, targetEventId]
+  );
+  const { status, error, isRetryable, event, handleClaim } = useSchoolClaim(targetEventId ?? undefined, {
+    onSuccess: onClaimSuccess,
+  });
 
   useEffect(() => {
     if (!targetEventId) return;
     setStarted(targetEventId).catch(() => {});
   }, [targetEventId]);
+
+  const handleParticipate = () => {
+    if (!targetEventId) return;
+    if (isSchoolMode) {
+      handleClaim();
+    } else {
+      router.push(schoolRoutes.success(targetEventId) as any);
+    }
+  };
+
+  if (!isValid) return null;
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -27,12 +49,23 @@ export const UserConfirmScreen: React.FC = () => {
         </AppText>
 
         <Card style={styles.card}>
-          <AppText variant="h3">地域清掃ボランティア</AppText>
-          <AppText variant="caption">2026/02/02 09:00-10:30</AppText>
-          <AppText variant="caption">主催: 生徒会</AppText>
+          <AppText variant="h3">{event?.title ?? '地域清掃ボランティア'}</AppText>
+          <AppText variant="caption">{event?.datetime ?? '2026/02/02 09:00-10:30'}</AppText>
+          <AppText variant="caption">主催: {event?.host ?? '生徒会'}</AppText>
         </Card>
 
-        <Button title="参加する" onPress={() => router.push(`/u/success?eventId=${targetEventId}` as any)} />
+        {error ? (
+          <AppText variant="caption" style={styles.apiErrorText}>
+            {error}
+          </AppText>
+        ) : null}
+
+        <Button
+          title={status === 'loading' ? '処理中…' : status === 'error' && isRetryable ? '再試行' : '参加する'}
+          onPress={handleParticipate}
+          loading={status === 'loading'}
+          disabled={status === 'loading'}
+        />
         <Button
           title="戻る"
           variant="secondary"
@@ -40,9 +73,7 @@ export const UserConfirmScreen: React.FC = () => {
           style={styles.secondaryButton}
         />
 
-        <AppText variant="caption" style={styles.errorText}>
-          受付時間外です。担当の先生に確認してください。
-        </AppText>
+        {/* TODO: 受付時間外時のみ表示。現状はモックのため非表示 */}
       </View>
     </SafeAreaView>
   );
@@ -70,8 +101,9 @@ const styles = StyleSheet.create({
   secondaryButton: {
     marginTop: theme.spacing.sm,
   },
-  errorText: {
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.md,
+  apiErrorText: {
+    color: theme.colors.error,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
 });

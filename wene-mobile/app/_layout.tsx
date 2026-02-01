@@ -56,6 +56,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" />
         <Stack.Screen name="r/[campaignId]" />
+        <Stack.Screen name="r/school/[eventId]" />
         <Stack.Screen name="wallet" />
         <Stack.Screen name="use/[campaignId]" />
         <Stack.Screen name="phantom/[action]" />

@@ -159,6 +159,17 @@ npm run start:reset
 
 ### Android Development
 
+#### Emulator-first 開発（推奨）
+
+Mac 上で Android Emulator を主軸にする場合の手順は [wene-mobile/docs/EMULATOR_DEVELOPMENT.md](../wene-mobile/docs/EMULATOR_DEVELOPMENT.md) を参照してください。
+
+```bash
+cd wene-mobile
+npm run emulator:check    # エミュレータ起動確認
+npm run emulator:start    # 未起動なら起動
+npm run deploy:adb        # APK ビルド→エミュレータへインストール（emulator-xxxx のみ対象）
+```
+
 #### Prerequisites
 ```bash
 # macOS (Homebrew)

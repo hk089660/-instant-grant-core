@@ -13,6 +13,20 @@ It is in a **PoC / v0** phase, focused on the demo flow below.
 
 These updates focus on **stability, operational safety, and real-world school usage**.
 
+### Recent Updates (School Participation Flow Refactor)
+
+School participation flow logic, types, and error handling have been restructured for clarity and easy replacement.
+
+- **API layer abstraction**: `SchoolClaimClient` / `SchoolEventProvider` interfaces separate mock from production; swapping to a fetch-based implementation is straightforward.
+- **UI/logic separation via Hook**: `useSchoolClaim` centralizes idle/loading/success/already/error states; screens depend only on state and `handleClaim`.
+- **Unified error representation**: `SchoolClaimResult` (Success | Failure), `SchoolClaimErrorCode` (retryable / invalid_input / not_found) enable clear logic-side branching. `errorInfo` / `isRetryable` identify retryable errors.
+- **eventId centralization**: `parseEventId` / `useEventIdFromParams` consolidate query/route parsing and validation; invalid eventId redirects to `/u`.
+- **Unified routing**: `schoolRoutes` constants for home/events/scan/confirm/success/schoolClaim.
+- **Unified already-handling**: Already-joined (`alreadyJoined`) also navigates to success screen for consistent UX.
+- **Retry flow**: Button label changes to "Retry" for retryable errors.
+
+→ Details: [School Participation Flow (Architecture)](#school-participation-flow-architecture) and [wene-mobile/docs/STATIC_VERIFICATION_REPORT.md](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md)
+
 ### Project Status: Claim flow verified on Android (2025)
 
 - **Claim flow is fully verified** on Android (APK) with Phantom wallet: connect → sign → send → confirm → token receipt.
@@ -25,6 +39,41 @@ These updates focus on **stability, operational safety, and real-world school us
 - View event details
 - Claim a digital participation ticket
 - Ticket is stored and viewable in the app
+
+### School Participation Flow (Architecture)
+
+**Flow**
+
+1. Home → "Start participation" → Event list (`/u`)
+2. "Participate" → Scan (`/u/scan`)
+3. "Start scan" → Confirm (`/u/confirm?eventId=evt-001`)
+4. "Participate" → Claim API → Success (`/u/success?eventId=evt-001`)
+5. "Done" → Back to list
+
+**Key concepts**
+
+| Concept | Description |
+|---------|-------------|
+| `SchoolClaimClient` | Interface for the claim API client. Mock can be replaced with a fetch-based implementation |
+| `useSchoolClaim` | Hook encapsulating claim logic. Exposes `status` (idle/loading/success/already/error), `handleClaim`, `onSuccess` |
+| `SchoolClaimResult` | Discriminated union: success `{ success: true, eventName, alreadyJoined? }`, failure `{ success: false, error: { code, message } }` |
+| `useEventIdFromParams` | Parses and validates `eventId` from query/route. `redirectOnInvalid: true` replaces to `/u` when invalid |
+| `schoolRoutes` | Route constants: home/events/scan/confirm/success/schoolClaim |
+
+**Mock cases (for testing)**
+
+- evt-001: Success
+- evt-002: Already joined (`alreadyJoined`) → navigates to success screen
+- evt-003: Retryable error → "Retry" to re-claim
+
+**Verification (static)**
+
+- TypeScript: `npx tsc --noEmit` ✅
+- `useSchoolClaim` state transitions ✅
+- Routing consistency (`eventId` unified via `useEventIdFromParams`) ✅
+- For future fetch implementation: map HTTP errors to Result (404→not_found, 5xx/network→retryable)
+
+→ Details: [wene-mobile/docs/STATIC_VERIFICATION_REPORT.md](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md), [Development Guide](./docs/DEVELOPMENT.md), [Emulator Development](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
 
 ### First Target Use Case: School Event Participation Ticket
 The first concrete use case of **We-ne** is a **digital participation ticket for school events and volunteer activities**.
@@ -55,7 +104,7 @@ This use case prioritizes **speed, usability, and privacy**, making it suitable 
 [![CI](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-[日本語版 README](./README.ja.md) | [Architecture](./docs/ARCHITECTURE.md) | [Development Guide](./docs/DEVELOPMENT.md)
+[日本語版 README](./README.ja.md) | [Architecture](./docs/ARCHITECTURE.md) | [Development Guide](./docs/DEVELOPMENT.md) | [Static Verification Report](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md) | [Emulator Development](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
 
 ---
 
@@ -229,6 +278,21 @@ chmod +x scripts/build-all.sh
 ./scripts/build-all.sh build  # build only
 ./scripts/build-all.sh test   # contract tests only
 ```
+
+**Local verification (type/build)**
+
+```bash
+# From repo root
+npm run build
+
+# Mobile only (TypeScript)
+cd wene-mobile && npx tsc --noEmit
+```
+
+**Upcoming**
+
+- Device/emulator verification will be done later (Android Emulator and Pixel 8 via USB are not available in current environment).
+- UI final check on Pixel 8 (USB debugging) is planned after returning home.
 
 **What success looks like**
 

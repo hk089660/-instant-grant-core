@@ -41,6 +41,15 @@ export const mockEvents: Array<{
     rtCount: 8,
     totalCount: 8,
   },
+  {
+    id: 'evt-003',
+    title: '体育祭',
+    datetime: '2026/02/15 09:00-15:00',
+    host: '体育委員会',
+    state: 'published',
+    rtCount: 0,
+    totalCount: 120,
+  },
 ];
 
 export const mockParticipants = [

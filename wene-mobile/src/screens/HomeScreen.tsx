@@ -4,16 +4,27 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button } from '../ui/components';
 import { theme } from '../ui/theme';
+import { getClaimMode } from '../config/claimMode';
+import { schoolRoutes } from '../lib/schoolRoutes';
 
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
+  const isSchoolMode = getClaimMode() === 'school';
 
   const handleStartReceive = () => {
-    router.push('/r/demo-campaign?code=demo-invite');
+    if (isSchoolMode) {
+      router.push(schoolRoutes.events as any);
+    } else {
+      router.push('/r/demo-campaign?code=demo-invite');
+    }
   };
 
   const handleDemoLink = () => {
-    router.push('/r/demo-campaign?code=demo-invite');
+    if (isSchoolMode) {
+      router.push(schoolRoutes.scan as any);
+    } else {
+      router.push('/r/demo-campaign?code=demo-invite');
+    }
   };
 
   return (
@@ -23,11 +34,11 @@ export const HomeScreen: React.FC = () => {
           We-ne
         </AppText>
         <AppText variant="bodyLarge" style={styles.description}>
-          支援クレジットを受け取る
+          {isSchoolMode ? 'イベントに参加する' : '支援クレジットを受け取る'}
         </AppText>
 
         <Button
-          title="受け取りを開始"
+          title={isSchoolMode ? '参加を開始' : '受け取りを開始'}
           onPress={handleStartReceive}
           variant="primary"
           disabled={false}
@@ -36,7 +47,7 @@ export const HomeScreen: React.FC = () => {
 
         <TouchableOpacity onPress={handleDemoLink} style={styles.demoLink}>
           <AppText variant="small" style={styles.demoLinkText}>
-            デモリンクを開く
+            {isSchoolMode ? 'QRを読み取る' : 'デモリンクを開く'}
           </AppText>
         </TouchableOpacity>
       </View>

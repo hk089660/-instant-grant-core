@@ -479,7 +479,10 @@ ${st.balanceLamports ?? 'null'}
     return () => clearInterval(t);
   }, [__DEV__, state]);
 
-  const handleClaim = async () => {
+  /**
+   * Solana モード用: 既存の Phantom 署名・送信フロー（変更しない）
+   */
+  const handleClaimSolana = async () => {
     console.log('[CLAIM] checkpoint 1: press');
     try {
       if (state === 'Error') {
@@ -1075,7 +1078,7 @@ ${st.balanceLamports ?? 'null'}
           ) : (
             <Button
               title={getButtonTitle()}
-              onPress={handleClaim}
+              onPress={handleClaimSolana}
               variant="primary"
               loading={state === 'Signing' || state === 'Sending' || state === 'Claiming' || state === 'Connecting'}
               disabled={state === 'Expired' || state === 'Claiming' || state === 'Connecting' || state === 'Signing' || state === 'Sending'}

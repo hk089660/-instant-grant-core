@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AppText, Button, Card } from '../../ui/components';
 import { theme } from '../../ui/theme';
+import { schoolRoutes } from '../../lib/schoolRoutes';
+import { useEventIdFromParams } from '../../hooks/useEventIdFromParams';
 
 export const UserScanScreen: React.FC = () => {
   const router = useRouter();
-  const { eventId } = useLocalSearchParams<{ eventId?: string }>();
-  const targetEventId = eventId ?? 'evt-001';
+  const { eventId: targetEventId } = useEventIdFromParams({ defaultValue: 'evt-001' });
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -26,17 +27,15 @@ export const UserScanScreen: React.FC = () => {
           </AppText>
         </Card>
 
-        <Button title="読み取り開始" onPress={() => router.push(`/u/confirm?eventId=${targetEventId}` as any)} />
+        <Button title="読み取り開始" onPress={() => targetEventId && router.push(schoolRoutes.confirm(targetEventId) as any)} />
         <Button
           title="もう一度読み取る"
           variant="secondary"
-          onPress={() => router.replace(`/u/scan?eventId=${targetEventId}` as any)}
+          onPress={() => targetEventId && router.replace(`${schoolRoutes.scan}?eventId=${targetEventId}` as any)}
           style={styles.secondaryButton}
         />
 
-        <AppText variant="caption" style={styles.errorText}>
-          QRが期限切れです。受付のQRをもう一度読み取ってください。
-        </AppText>
+        {/* TODO: QR 期限切れ時のみ表示。現状はモックのため非表示 */}
       </View>
     </SafeAreaView>
   );
@@ -69,9 +68,5 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     marginTop: theme.spacing.sm,
-  },
-  errorText: {
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.md,
   },
 });

@@ -1,20 +1,23 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AppText, Button, Card } from '../../ui/components';
 import { theme } from '../../ui/theme';
 import { setCompleted } from '../../data/participationStore';
+import { schoolRoutes } from '../../lib/schoolRoutes';
+import { useEventIdFromParams } from '../../hooks/useEventIdFromParams';
 
 export const UserSuccessScreen: React.FC = () => {
   const router = useRouter();
-  const { eventId } = useLocalSearchParams<{ eventId?: string }>();
-  const targetEventId = eventId ?? 'evt-001';
+  const { eventId: targetEventId, isValid } = useEventIdFromParams({ redirectOnInvalid: true });
 
   useEffect(() => {
     if (!targetEventId) return;
     setCompleted(targetEventId).catch(() => {});
   }, [targetEventId]);
+
+  if (!isValid) return null;
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -33,11 +36,11 @@ export const UserSuccessScreen: React.FC = () => {
           </AppText>
         </Card>
 
-        <Button title="完了" onPress={() => router.replace('/u' as any)} />
+        <Button title="完了" onPress={() => router.replace(schoolRoutes.events as any)} />
         <Button
           title="もう一度読み取る"
           variant="secondary"
-          onPress={() => router.replace(`/u/scan?eventId=${targetEventId}` as any)}
+          onPress={() => targetEventId && router.replace(`${schoolRoutes.scan}?eventId=${targetEventId}` as any)}
           style={styles.secondaryButton}
         />
       </View>

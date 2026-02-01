@@ -28,7 +28,7 @@ export const EventRow: React.FC<EventRowProps> = ({
       <View style={styles.body}>
         <AppText variant="bodyLarge">{title}</AppText>
         <AppText variant="caption">{datetime}</AppText>
-        <AppText variant="caption">{host}</AppText>
+        <AppText variant="caption">主催: {host}</AppText>
       </View>
       {rightSlot ? <View style={styles.right}>{rightSlot}</View> : null}
     </TouchableOpacity>

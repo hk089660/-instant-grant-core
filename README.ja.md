@@ -35,6 +35,7 @@ School参加フローのロジック・型・エラー処理を整理し、差�
 - モバイルでは Phantom のセキュリティ仕様により、**cluster（devnet）の明示が必須**です。
 - RPC / トランザクション / deeplink のクラスタ不一致は Phantom によりブロックされます（「メインネットで有効な取引」等の警告）。
 - 本 PoC では **devnet 固定**で動作させています（RPC・Phantom deeplinkともに `cluster=devnet` を明示）。
+- **devnet/mainnet 警告の扱い**: Phantom で mainnet 関連の警告が出た場合は、RPC および deeplink で `cluster=devnet` が指定されているか確認する。本アプリは mainnet に切り替えない。
 
 ### 現在動作しているデモ導線
 - イベントQRコードの読み取り
@@ -107,7 +108,14 @@ School参加フローのロジック・型・エラー処理を整理し、差�
 [![CI](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-[英語版 README](./README.md) | [アーキテクチャ](./docs/ARCHITECTURE.md) | [開発ガイド](./docs/DEVELOPMENT.md) | [静的検証レポート](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md) | [エミュレータ開発](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
+[英語版 README](./README.md) | [アーキテクチャ（構成図）](./docs/ARCHITECTURE.md) | [開発ガイド](./docs/DEVELOPMENT.md) | [静的検証レポート](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md) | [エミュレータ開発](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
+
+### TL;DR（審査用）
+- **What**: 参加券/クレジット等をトークンとして発行・受け取りできる、モバイル + オンチェーンの PoC。
+- **Why**: 紙の参加証明を、低コストで検証可能なデジタル受け取りに置き換える。
+- **How**: Phantom 接続 → vault から claim → **統合残高一覧**でクレジット/参加券/クーポン/SPLトークンを一括表示。
+- **Safety**: 本 PoC は **devnet 固定**（RPC と deeplink は `cluster=devnet` 指定）で、mainnet へ切り替えない。
+- **Status**: claim フロー動作確認済み。開発ガイド/アーキテクチャ等のリンクを整備。
 
 ---
 
@@ -214,6 +222,8 @@ we-ne は Solana 上で動作する**非保管型の支援配布システム**�
 アプリは、**クレジット・参加券・クーポン・SPLトークン**を同一の **BalanceItem** モデルに正規化した**単一の残高一覧**を表示する。発行主体（issuer）と利用可能性（例: 今日使える）を UI で明示し、利用者が**誰が発行した価値か**・**いつ使えるか**を把握できる設計である。
 
 ### 一覧に表示される要素
+
+**トークン一覧UI**: ウォレット/残高画面でこの一覧を表示。クレジット・参加券・クーポン・SPLトークンが1つのスクロール可能な一覧で表示される。
 
 - **デモ支援クレジット**（オフチェーン）
 - **コミュニティ・イベント参加券**（オフチェーン）

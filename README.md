@@ -35,6 +35,7 @@ School participation flow logic, types, and error handling have been restructure
 - Phantom **strictly validates cluster consistency** (devnet / testnet / mainnet). If the transaction is interpreted as mainnet, Phantom may block signing with a warning.
 - **Deep links and RPC endpoints** must explicitly match the target cluster (e.g. `cluster=devnet` in redirect URLs and devnet RPC only).
 - The **current PoC is fixed to devnet** for safety; all RPC and Phantom deeplinks use devnet.
+- **Devnet / mainnet warnings**: If Phantom shows a mainnet-related warning, confirm that RPC and deeplinks use `cluster=devnet`; the app does not switch to mainnet.
 
 ### What works today (Demo Flow)
 - Scan event QR code
@@ -106,7 +107,14 @@ This use case prioritizes **speed, usability, and privacy**, making it suitable 
 [![CI](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-[日本語版 README](./README.ja.md) | [Architecture](./docs/ARCHITECTURE.md) | [Development Guide](./docs/DEVELOPMENT.md) | [Static Verification Report](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md) | [Emulator Development](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
+[日本語版 README](./README.ja.md) | [Architecture (system diagram)](./docs/ARCHITECTURE.md) | [Development Guide](./docs/DEVELOPMENT.md) | [Static Verification Report](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md) | [Emulator Development](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
+
+### TL;DR (for reviewers)
+- **What**: Mobile app + on-chain program PoC for issuing and claiming attendance vouchers/credits as tokens.
+- **Why**: Replace "paper participation" with verifiable, low-cost digital claims usable in real schools/events.
+- **How**: Users connect Phantom, claim from a vault, and see a **Unified Balance List** that merges credits/vouchers/coupons/SPL tokens.
+- **Safety**: PoC is **devnet-only** (RPC and deeplinks specify `cluster=devnet`); it does not switch to mainnet.
+- **Status**: Claim flow verified; build is expected to pass with linked guides and architecture docs.
 
 ---
 
@@ -131,6 +139,8 @@ we-ne is a **non-custodial benefit distribution system** built on Solana, design
 The app shows a **single balance list** that normalizes credits, vouchers, coupons, and SPL tokens into one **BalanceItem** model. Issuer and usability (e.g. "usable today") are shown in the UI so users understand *who* issued the value and *when* they can use it.
 
 ### What appears in the list
+
+**Token list UI**: This list is shown on the wallet/balance screen; credits, vouchers, coupons, and SPL tokens appear in a single scrollable list.
 
 - **Demo Support Credits** (off-chain)
 - **Community / Event Vouchers** (off-chain)

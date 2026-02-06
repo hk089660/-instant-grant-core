@@ -23,7 +23,10 @@ export const UserScanScreen: React.FC = () => {
 
         <Card style={styles.cameraBox}>
           <AppText variant="caption" style={styles.cameraText}>
-            カメラプレビュー（モック）
+            QRコードをスキャンしてください
+          </AppText>
+          <AppText variant="small" style={styles.cameraText}>
+            （カメラ機能は準備中です）
           </AppText>
         </Card>
 

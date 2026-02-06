@@ -17,6 +17,17 @@ export const AdminPrintScreen: React.FC = () => {
   const printCardProps = { 'data-print-card': 'true' } as any;
   const printQrProps = { 'data-print-qr': 'true' } as any;
 
+  /**
+   * QRコードURLの生成
+   * 
+   * BASE_URLの動作:
+   * - Web版: 常に `window.location.origin` を使用（自動的に現在のページのベースURLを取得）
+   * - ネイティブ版: `EXPO_PUBLIC_BASE_URL` 環境変数が必要
+   *   - `EXPO_PUBLIC_BASE_URL` が設定されていない場合、QRコードは非表示になり、
+   *     設定が必要な旨のメッセージが表示される（設計上の制約）
+   *   - ネイティブ環境では `window.location.origin` が利用できないため、
+   *     明示的なBASE_URL設定が必要
+   */
   const browseQrUrl = useMemo(() => {
     if (Platform.OS !== 'web' || typeof window === 'undefined') return '';
     const base = window.location.origin;

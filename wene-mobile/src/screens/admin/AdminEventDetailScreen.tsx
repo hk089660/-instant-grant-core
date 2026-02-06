@@ -73,7 +73,7 @@ export const AdminEventDetailScreen: React.FC = () => {
           </AppText>
           <View style={styles.qrBox}>
             <AppText variant="caption" style={styles.cardMuted}>
-              QRプレビュー（モック）
+              QRコードを表示するには「QRを表示」をタップしてください
             </AppText>
           </View>
           <View style={styles.qrActions}>

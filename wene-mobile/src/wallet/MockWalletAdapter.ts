@@ -1,5 +1,4 @@
-import { Transaction, Keypair, PublicKey } from '@solana/web3.js';
-import { Platform } from 'react-native';
+import { Transaction, Keypair } from '@solana/web3.js';
 import type { WalletAdapter, WalletConnectResult } from './WalletAdapter';
 
 /**
@@ -21,23 +20,11 @@ export class MockWalletAdapter implements WalletAdapter {
   }
 
   async connect(): Promise<WalletConnectResult> {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/2e86959c-0542-444e-a106-629fb6908b3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MockWalletAdapter.ts:25',message:'MockWalletAdapter.connect called',data:{platform:Platform.OS,hasKeypair:this._keypair!==null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    // #endregion
     // 新しいキーペアを生成（または固定値を使用）
     if (!this._keypair) {
       try {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/2e86959c-0542-444e-a106-629fb6908b3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MockWalletAdapter.ts:30',message:'calling Keypair.generate',data:{platform:Platform.OS},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-        // #endregion
         this._keypair = Keypair.generate();
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/2e86959c-0542-444e-a106-629fb6908b3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MockWalletAdapter.ts:33',message:'Keypair.generate success',data:{publicKey:this._keypair.publicKey.toBase58().substring(0,8)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-        // #endregion
       } catch (error) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/2e86959c-0542-444e-a106-629fb6908b3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MockWalletAdapter.ts:37',message:'Keypair.generate error',data:{error:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-        // #endregion
         throw error;
       }
     }

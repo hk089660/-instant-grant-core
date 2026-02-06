@@ -34,6 +34,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: 'wene-mobile',
     scheme: 'wene', // wene://r/*, wene://phantom/connect, wene://phantom/sign
     version: timestamp ? `1.0.0-${timestamp}` : '1.0.0',
+    runtimeVersion: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
@@ -43,6 +44,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       backgroundColor: '#ffffff',
     },
     assetBundlePatterns: ['**/*'],
+    updates: {
+      url: 'https://u.expo.dev/a7a43c37-984c-4754-b086-5de205ecad1e',
+    },
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'jp.wene.app',

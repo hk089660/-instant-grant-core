@@ -741,21 +741,18 @@ ${st.balanceLamports ?? 'null'}
     }
   };
 
-  if (grantLoading) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+  const showGrantLoading = grantLoading;
+  const showGrantNotFound = !grantLoading && grantNotFound;
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      {showGrantLoading ? (
         <View style={styles.centerContent}>
           <AppText variant="body" style={styles.secondaryText}>
             読み込み中…
           </AppText>
         </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (grantNotFound) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      ) : showGrantNotFound ? (
         <View style={styles.centerContent}>
           <AppText variant="h3" style={styles.title}>
             見つかりません
@@ -765,12 +762,7 @@ ${st.balanceLamports ?? 'null'}
           </AppText>
           <Button title="ホームに戻る" onPress={() => router.replace('/')} variant="secondary" style={styles.claimedButton} />
         </View>
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      ) : (
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -1087,6 +1079,7 @@ ${st.balanceLamports ?? 'null'}
           )}
         </View>
       </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

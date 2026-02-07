@@ -73,9 +73,12 @@ export const WalletScreen: React.FC = () => {
     fetchBalances(true);
   }, [fetchBalances]);
 
-  if (!walletPubkey) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+  const showNoWallet = !walletPubkey;
+  const showLoading = !showNoWallet && loading && !refreshing;
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      {showNoWallet ? (
         <View style={styles.center}>
           <AppText variant="h3" style={styles.title}>
             保有トークン一覧
@@ -90,24 +93,14 @@ export const WalletScreen: React.FC = () => {
             style={styles.topButton}
           />
         </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (loading && !refreshing) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      ) : showLoading ? (
         <View style={styles.center}>
           <AppText variant="body" style={styles.muted}>
             読み込み中…
           </AppText>
         </View>
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      ) : (
+        <>
       <View style={styles.header}>
         <AppText variant="h2" style={styles.title}>
           保有トークン一覧
@@ -185,6 +178,8 @@ export const WalletScreen: React.FC = () => {
           </Card>
         )}
       />
+        </>
+      )}
     </SafeAreaView>
   );
 };

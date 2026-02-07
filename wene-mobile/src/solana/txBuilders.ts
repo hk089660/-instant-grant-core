@@ -8,10 +8,11 @@ import {
 } from '@solana/spl-token';
 import { BN } from '@coral-xyz/anchor';
 import { GRANT_PROGRAM_ID } from './config';
-import { getConnection, getProgram, RPC_URL } from './singleton';
+import { getConnection, getProgram } from './anchorClient';
 import { getGrantPda, getVaultPda, getReceiptPda, calculatePeriodIndex } from './grantProgram';
 import { DEFAULT_CLUSTER } from './cluster';
 import { DEVNET_GRANT_CONFIG } from './devnetConfig';
+import { RPC_URL } from './singleton';
 
 /**
  * Claim Transaction 構築パラメータ
@@ -54,7 +55,7 @@ export interface BuildClaimTxResult {
 export async function buildClaimTx(
   params: BuildClaimTxParams
 ): Promise<BuildClaimTxResult> {
-  const { campaignId: _campaignId, recipientPubkey } = params;
+  const { campaignId, recipientPubkey } = params;
   const connection = getConnection();
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     console.log('[RPC] buildClaimTx() connection.rpcEndpoint=', connection.rpcEndpoint);
@@ -187,8 +188,7 @@ export interface BuildUseTxResult {
   tx: Transaction;
   meta: {
     feePayer: PublicKey | null;
-    recentBlockhash: string;
-    lastValidBlockHeight: number;
+    recentBlockhash: string | null;
     instructionCount: number;
     mint: PublicKey;
     userAta: PublicKey;
@@ -207,19 +207,15 @@ export interface BuildUseTxResult {
 export async function buildUseTx(
   params: BuildUseTxParams
 ): Promise<BuildUseTxResult> {
-  const { campaignId: _campaignId, recipientPubkey, amount } = params;
+  const { campaignId, recipientPubkey, amount } = params;
   const connection = getConnection();
 
   // TODO: campaignId から Grant 情報（mint）を取得
-  // PoC: devnetConfig の mint のみ許可（誤って wSOL などを burn しないための安全装置）
-  const devnetConfig = DEFAULT_CLUSTER === 'devnet' ? DEVNET_GRANT_CONFIG : null;
-  if (!devnetConfig) {
-    throw new Error('UseTx is not configured (devnetConfig is missing)');
-  }
-  const mint = devnetConfig.mint;
+  // 現時点では、ダミー値を使用（実際の実装では API から取得）
+  const dummyMint = new PublicKey('So11111111111111111111111111111111111111112'); // SOL (devnet)
 
   // ユーザーの ATA を取得
-  const userAta = await getAssociatedTokenAddress(mint, recipientPubkey);
+  const userAta = await getAssociatedTokenAddress(dummyMint, recipientPubkey);
 
   // トランザクションを作成
   const tx = new Transaction();
@@ -248,9 +244,9 @@ export async function buildUseTx(
       tx.add(
         createBurnInstruction(
           userAta, // account: 燃やすトークンアカウント
-          mint, // mint: PoC の配布トークン
+          dummyMint, // mint: トークンのmint
           recipientPubkey, // owner: トークンアカウントの所有者（signer）
-          burnAmount, // amount (u64)
+          Number(burnAmount), // amount (u64)
           [], // multiSigners（単一署名者の場合は空）
           TOKEN_PROGRAM_ID
         )
@@ -261,9 +257,15 @@ export async function buildUseTx(
     }
   }
 
-  // recentBlockhash / lastValidBlockHeight（sendSignedTx の confirm で使えるようにする）
-  const { blockhash: recentBlockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
-  tx.recentBlockhash = recentBlockhash;
+  // recentBlockhash を取得
+  let recentBlockhash: string | null = null;
+  try {
+    const { blockhash } = await connection.getLatestBlockhash('confirmed');
+    recentBlockhash = blockhash;
+    tx.recentBlockhash = blockhash;
+  } catch (error) {
+    console.warn('Failed to get recent blockhash:', error);
+  }
 
   // feePayer を設定
   tx.feePayer = recipientPubkey;
@@ -273,9 +275,8 @@ export async function buildUseTx(
     meta: {
       feePayer: recipientPubkey,
       recentBlockhash,
-      lastValidBlockHeight,
       instructionCount: tx.instructions.length,
-      mint,
+      mint: dummyMint,
       userAta,
       amount: burnAmount,
     },

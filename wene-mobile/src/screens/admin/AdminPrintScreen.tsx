@@ -1,54 +1,27 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import QRCode from 'react-native-qrcode-svg';
 import { AppText, Button, Card } from '../../ui/components';
 import { adminTheme } from '../../ui/adminTheme';
-import { useAdminRole } from '../../hooks/useAdminRole';
-import { getEventByIdSync, getEventsSync } from '../../data/adminEventsStore';
+import { getMockAdminRole } from '../../data/adminMock';
 import { roleLabel } from '../../types/ui';
-import { getEventScanUrl, getEventJoinUrl } from '../../utils/appUrl';
-import { getSchoolApiBaseUrl } from '../../config/api';
-import { apiFetchJoinToken } from '../../api/adminApiClient';
+import { buildPhantomBrowseUrl } from '../../utils/phantom';
 
 export const AdminPrintScreen: React.FC = () => {
   const router = useRouter();
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
-  const { role, loading } = useAdminRole();
-  const [joinToken, setJoinToken] = useState<string | null>(null);
-  const [tokenLoading, setTokenLoading] = useState(false);
-  const event = getEventByIdSync(eventId ?? '') ?? getEventsSync()[0];
-
-  const fetchToken = useCallback(async () => {
-    if (!event?.id || !getSchoolApiBaseUrl()) return;
-    setTokenLoading(true);
-    try {
-      const data = await apiFetchJoinToken(event.id);
-      setJoinToken(data?.token ?? null);
-    } catch {
-      setJoinToken(null);
-    } finally {
-      setTokenLoading(false);
-    }
-  }, [event?.id]);
-
-  useEffect(() => {
-    if (event?.id && getSchoolApiBaseUrl() && role === 'admin') fetchToken();
-  }, [event?.id, role, fetchToken]);
-
-  if (loading || role == null) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <AppText variant="caption" style={{ color: adminTheme.colors.textSecondary }}>読み込み中…</AppText>
-      </View>
-    );
-  }
+  const role = getMockAdminRole();
   const isAdmin = role === 'admin';
   const printHiddenProps = { 'data-print-hidden': 'true' } as any;
   const printCardProps = { 'data-print-card': 'true' } as any;
   const printQrProps = { 'data-print-qr': 'true' } as any;
-  const scanUrl = getSchoolApiBaseUrl() && joinToken ? getEventJoinUrl(event.id, joinToken) : getEventScanUrl(event.id);
+
+  const browseQrUrl = useMemo(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return '';
+    const base = window.location.origin;
+    return buildPhantomBrowseUrl(base, '/u/scan');
+  }, []);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof document === 'undefined') return;
@@ -92,7 +65,7 @@ export const AdminPrintScreen: React.FC = () => {
             <AppText variant="small" style={styles.role}>
               {roleLabel[role]}
             </AppText>
-            <Button title="戻る" variant="secondary" onPress={() => router.back()} tone="dark" />
+            <Button title="戻る" variant="secondary" onPress={() => router.back()} />
           </View>
         </View>
 
@@ -109,32 +82,37 @@ export const AdminPrintScreen: React.FC = () => {
           <>
             <Card style={styles.card} {...printCardProps}>
               <AppText variant="h3" style={styles.cardText}>
-                {event.title}
+                地域清掃ボランティア
               </AppText>
               <AppText variant="caption" style={styles.cardText}>
-                {event.datetime}
+                2026/02/02 09:00-10:30
               </AppText>
               <AppText variant="caption" style={styles.cardText}>
-                主催: {event.host}
+                主催: 生徒会
               </AppText>
               <AppText variant="small" style={styles.cardMuted}>
-                イベントID: {eventId}
+                ID: {eventId}
               </AppText>
               <View style={styles.qrBox} {...printQrProps}>
-                <QRCode
-                  value={scanUrl}
-                  size={220}
-                  backgroundColor="#ffffff"
-                  color="#000000"
-                />
+                <AppText variant="caption" style={styles.cardMuted}>
+                  QRプレビュー（印刷用）
+                </AppText>
+                {browseQrUrl ? (
+                  <AppText variant="small" style={[styles.cardMuted, styles.qrUrl]} selectable>
+                    {browseQrUrl}
+                  </AppText>
+                ) : null}
               </View>
               <AppText variant="small" style={styles.cardMuted}>
-                参加用QRコード：読み取ると参加画面が開きます。印刷して受付でご利用ください。
+                参加用QR（Phantom内ブラウザで開く・Android推奨）
+              </AppText>
+              <AppText variant="caption" style={styles.cardMuted}>
+                上記URLをQRコード化して印刷してください。生徒はPhantomでスキャンするとアプリ内ブラウザで開きます。
               </AppText>
             </Card>
 
             <View {...printHiddenProps}>
-              <Button title="印刷する" variant="secondary" onPress={handlePrint} tone="dark" />
+              <Button title="印刷する" variant="secondary" onPress={handlePrint} />
             </View>
           </>
         )}
@@ -146,7 +124,7 @@ export const AdminPrintScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: adminTheme.colors.background,
+    backgroundColor: '#ffffff',
   },
   content: {
     flex: 1,
@@ -180,9 +158,18 @@ const styles = StyleSheet.create({
     color: adminTheme.colors.textSecondary,
   },
   qrBox: {
-    height: 260,
+    height: 220,
+    borderRadius: adminTheme.radius.md,
+    borderWidth: 1,
+    borderColor: adminTheme.colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: adminTheme.spacing.md,
+  },
+  qrUrl: {
+    marginTop: adminTheme.spacing.sm,
+    paddingHorizontal: adminTheme.spacing.sm,
+    fontSize: 10,
+    maxWidth: '100%',
   },
 });

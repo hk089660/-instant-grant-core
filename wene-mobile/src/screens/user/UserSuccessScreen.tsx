@@ -17,17 +17,7 @@ export const UserSuccessScreen: React.FC = () => {
     setCompleted(targetEventId).catch(() => {});
   }, [targetEventId]);
 
-  if (!isValid) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        <View style={styles.content}>
-          <AppText variant="body" style={styles.subtitle}>
-            リダイレクト中…
-          </AppText>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  if (!isValid) return null;
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>

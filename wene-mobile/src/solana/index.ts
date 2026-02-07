@@ -47,6 +47,8 @@ export {
   getVaultPda,
   getReceiptPda,
   calculatePeriodIndex,
+  buildClaimGrantTransaction,
+  fetchGrantInfo,
 } from './grantProgram';
 
 // ============================================================

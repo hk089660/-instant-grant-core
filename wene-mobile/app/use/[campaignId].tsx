@@ -122,11 +122,8 @@ export default function UseScreen() {
         appUrl: 'https://wene.app',
       });
 
-      const signature = await sendSignedTx(signed, {
-        blockhash: result.meta.recentBlockhash,
-        lastValidBlockHeight: result.meta.lastValidBlockHeight,
-      });
-      await markAsUsed(campaignId, walletPubkey, signature);
+      const signature = await sendSignedTx(signed);
+      await markAsUsed(campaignId, walletPubkey, signature, Number(result.meta.amount));
       setUseScreenState('Used');
     } catch (error) {
       console.error('Use failed:', error);

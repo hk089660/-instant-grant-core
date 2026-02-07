@@ -35,5 +35,3 @@ export interface SchoolClaimResultFailure {
 }
 
 export type SchoolClaimResult = SchoolClaimResultSuccess | SchoolClaimResultFailure;
-
-export type { Certificate } from './certificate';

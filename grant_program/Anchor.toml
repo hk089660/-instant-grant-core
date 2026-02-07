@@ -16,8 +16,7 @@ grant_program = "GZcUoGHk8SfAArTKicL1jiRHZEQa3EuzgYcC2u4yWfSR"
 url = "https://api.apr.dev"
 
 [provider]
-# テスト/開発は localnet をデフォルトにする（devnet は手動デプロイ/動作確認用）
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

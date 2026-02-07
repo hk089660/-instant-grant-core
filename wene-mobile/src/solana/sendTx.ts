@@ -1,5 +1,5 @@
 import { Transaction } from '@solana/web3.js';
-import { getConnection } from './singleton';
+import { getConnection } from './anchorClient';
 
 /**
  * DEV のみ: simulate 失敗時に UI に err/logs を渡すためのエラー。

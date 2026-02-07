@@ -92,7 +92,5 @@ wene-mobile/android/.cxx/
 # ===================
 .cursor/
 *.log
-*.bak
-**/package-lock 2.json
 coverage/
 .nyc_output/

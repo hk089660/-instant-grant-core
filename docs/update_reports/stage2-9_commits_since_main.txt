@@ -1,1 +1,0 @@
-47e777e (HEAD -> school-mvp-stage2-9-xht, origin/school-mvp-stage2-9-xht) School MVP: admin auth, claim+join token, participations, server persistence (Stage2-9)

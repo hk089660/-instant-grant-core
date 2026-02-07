@@ -1,46 +1,25 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
 import { AppText, Button, CategoryTabs, CountBadge, EventRow, AdminShell, StatusBadge } from '../../ui/components';
 import { adminTheme } from '../../ui/adminTheme';
-import { getCategories, getDisplayRtCount } from '../../data/adminMock';
-import { useAdminRole } from '../../hooks/useAdminRole';
-import { listEvents } from '../../data/adminEventsStore';
-import type { AdminEvent } from '../../data/adminEventsStore';
+import { getMockAdminRole, setMockAdminRole, mockCategories, mockEvents } from '../../data/adminMock';
 
 export const AdminEventsScreen: React.FC = () => {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { role, setRole, loading } = useAdminRole();
-  const [events, setEvents] = useState<AdminEvent[]>([]);
+  const [role, setRole] = useState(getMockAdminRole());
   const canManageCategories = role === 'admin';
   const canCreateEvent = role === 'admin' || role === 'operator';
-
-  if (loading || role == null) {
-    return (
-      <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
-        <AppText variant="caption" style={{ color: adminTheme.colors.textSecondary }}>読み込み中…</AppText>
-      </View>
-    );
-  }
-
-  const fetchEvents = useCallback(async () => {
-    const list = await listEvents();
-    setEvents(list);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchEvents();
-    }, [fetchEvents])
-  );
 
   return (
     <AdminShell
       title="イベント一覧"
       role={role}
-      onRoleChange={setRole}
+      onRoleChange={(nextRole) => {
+        setRole(nextRole);
+        setMockAdminRole(nextRole);
+      }}
     >
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
@@ -49,7 +28,7 @@ export const AdminEventsScreen: React.FC = () => {
           </AppText>
           <View style={styles.headerActions}>
             {canCreateEvent ? (
-              <Button title="イベント作成" variant="secondary" onPress={() => router.push('/admin/events/new' as any)} tone="dark" />
+              <Button title="イベント作成" variant="secondary" onPress={() => {}} />
             ) : null}
             {canManageCategories ? (
               <Button
@@ -57,14 +36,13 @@ export const AdminEventsScreen: React.FC = () => {
                 variant="secondary"
                 onPress={() => router.push('/admin/categories' as any)}
                 style={styles.actionButton}
-                tone="dark"
               />
             ) : null}
           </View>
         </View>
 
         <CategoryTabs
-          categories={getCategories()}
+          categories={mockCategories}
           selectedId={selectedCategory}
           onSelect={setSelectedCategory}
           tone="dark"
@@ -72,16 +50,15 @@ export const AdminEventsScreen: React.FC = () => {
         />
 
         <View style={styles.list}>
-          {events.map((event) => (
+          {mockEvents.map((event) => (
             <EventRow
               key={event.id}
               title={event.title}
               datetime={event.datetime}
               host={event.host}
-              tone="dark"
               leftSlot={
                 <CountBadge
-                  value={getDisplayRtCount(event.id)}
+                  value={event.rtCount}
                   backgroundColor={adminTheme.colors.muted}
                   textColor={adminTheme.colors.textSecondary}
                 />
@@ -118,7 +95,7 @@ const styles = StyleSheet.create({
     marginLeft: adminTheme.spacing.sm,
   },
   title: {
-    color: '#ffffff',
+    color: adminTheme.colors.text,
   },
   tabs: {
     marginBottom: adminTheme.spacing.md,
@@ -135,7 +112,7 @@ const styles = StyleSheet.create({
     borderBottomColor: adminTheme.colors.border,
   },
   note: {
-    color: '#cccccc',
+    color: adminTheme.colors.textTertiary,
     marginTop: adminTheme.spacing.sm,
   },
 });

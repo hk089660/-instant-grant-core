@@ -36,37 +36,7 @@ export const UserConfirmScreen: React.FC = () => {
     }
   };
 
-  if (!isValid) {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        <View style={styles.content}>
-          <AppText variant="body" style={styles.subtitle}>
-            リダイレクト中…
-          </AppText>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (status === 'success' || status === 'already') {
-    return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        <View style={styles.content}>
-          <AppText variant="h2" style={styles.title}>
-            {status === 'already' ? '参加済みです' : '参加完了'}
-          </AppText>
-          <AppText variant="caption" style={styles.subtitle}>
-            {event?.title}
-          </AppText>
-          <Button
-            title="完了画面へ"
-            onPress={() => targetEventId && router.push(schoolRoutes.success(targetEventId) as any)}
-            style={styles.secondaryButton}
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  if (!isValid) return null;
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>

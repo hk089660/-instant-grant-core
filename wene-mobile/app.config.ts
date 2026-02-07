@@ -90,12 +90,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   },
   plugins: [
     'expo-router',
-    [
-      'expo-camera',
-      {
-        cameraPermission: 'QRコード読み取りのためカメラへのアクセスを許可してください。',
-      },
-    ],
   ],
   experiments: {
     typedRoutes: true,

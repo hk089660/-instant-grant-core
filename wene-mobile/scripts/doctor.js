@@ -101,7 +101,7 @@ const REQUIRED_PATTERNS = {
     "SafeAreaView",
     "schoolRoutes",
     "getParticipations",
-    "addSharedParticipation",
+    "submitSchoolClaim",
   ],
   'src/screens/user/UserConfirmScreen.tsx': [
     "SafeAreaView",
@@ -119,8 +119,8 @@ const REQUIRED_PATTERNS = {
   ],
   'src/screens/user/JoinScreen.tsx': [
     "getStudentSession",
-    "recordParticipation",
-    "addSharedParticipation",
+    "submitSchoolClaim",
+    "addTicket",
   ],
   // 管理者UI: 共通ラベル（日本語）の一元管理
   'src/types/ui.ts': [

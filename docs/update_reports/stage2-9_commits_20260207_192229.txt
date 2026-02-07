@@ -1,0 +1,2 @@
+28be5ed (HEAD -> school-mvp-stage2-9-xht, origin/school-mvp-stage2-9-xht) chore: add Stage2-9 diff report
+47e777e School MVP: admin auth, claim+join token, participations, server persistence (Stage2-9)

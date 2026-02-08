@@ -1,0 +1,4 @@
+59906f6 (HEAD -> school-mvp-stage2-9-xht, origin/school-mvp-stage2-9-xht) chore: update Stage2-9 PR notes and reports
+d8894ca chore: fix doctor build checks for Stage2-9 + update diff reports
+28be5ed chore: add Stage2-9 diff report
+47e777e School MVP: admin auth, claim+join token, participations, server persistence (Stage2-9)

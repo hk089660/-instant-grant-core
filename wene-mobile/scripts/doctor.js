@@ -7,6 +7,7 @@
  * 使い方:
  *   node scripts/doctor.js        # 問題を検出
  *   node scripts/doctor.js --fix  # 問題を自動修正
+ *   node scripts/doctor.js --build-repair  # ビルド修復（prebuild, local.properties, tsc）
  */
 
 const fs = require('fs');
@@ -16,6 +17,7 @@ const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const FIX_MODE = process.argv.includes('--fix');
+const BUILD_REPAIR = process.argv.includes('--build-repair');
 
 const colors = {
   red: '\x1b[31m',
@@ -40,10 +42,11 @@ let fixed = 0;
 
 // ========================================
 // 完成形ファイルのハッシュ (変更検出用)
+// アイコン再生成時に doctor --fix で更新可能
 // ========================================
 const LOCKED_FILES = {
-  'assets/icon.png': 'b16d15261c57c8df5567574b0573ef20',
-  'assets/adaptive-icon.png': 'b16d15261c57c8df5567574b0573ef20',
+  'assets/icon.png': '62bec56771e0d6a823c6b7ea893fc281',
+  'assets/adaptive-icon.png': '62bec56771e0d6a823c6b7ea893fc281',
 };
 
 // 必須パターン (これらが含まれていないとエラー)
@@ -356,11 +359,82 @@ function checkAssets() {
 }
 
 // ========================================
+// Build Repair
+// ========================================
+function runBuildRepair() {
+  log.info('Running build repair...');
+  try {
+    log.fix('1/5 npm install --legacy-peer-deps');
+    execSync('npm install --legacy-peer-deps', { cwd: ROOT, stdio: 'inherit' });
+    fixed++;
+  } catch (e) {
+    log.error('npm install failed');
+    issues++;
+    return;
+  }
+
+  try {
+    const androidDir = path.join(ROOT, 'android');
+    const localPropsPath = path.join(androidDir, 'local.properties');
+    if (!fs.existsSync(localPropsPath) && fs.existsSync(androidDir)) {
+      log.fix('2/5 Creating local.properties');
+      const possibleSdkPaths = [
+        process.env.ANDROID_HOME,
+        process.env.ANDROID_SDK_ROOT,
+        '/opt/homebrew/share/android-commandlinetools',
+        `${process.env.HOME}/Library/Android/sdk`,
+        `${process.env.HOME}/Android/Sdk`,
+      ].filter(Boolean);
+      let sdkPath = null;
+      for (const p of possibleSdkPaths) {
+        if (p && fs.existsSync(p)) {
+          sdkPath = p;
+          break;
+        }
+      }
+      if (sdkPath) {
+        fs.writeFileSync(localPropsPath, `sdk.dir=${sdkPath}\n`);
+        log.success(`Created local.properties with sdk.dir=${sdkPath}`);
+        fixed++;
+      } else {
+        log.warn('Could not find Android SDK - create android/local.properties manually');
+      }
+    } else if (!fs.existsSync(androidDir)) {
+      log.fix('2/5 Running expo prebuild --clean');
+      execSync('npx expo prebuild --clean', { cwd: ROOT, stdio: 'inherit' });
+      fixed++;
+      runBuildRepair(); // Retry local.properties after prebuild
+      return;
+    } else {
+      log.success('2/5 local.properties exists');
+    }
+  } catch (e) {
+    log.warn('local.properties setup: ' + (e.message || String(e)));
+  }
+
+  try {
+    log.fix('3/5 Running npx tsc --noEmit');
+    execSync('npx tsc --noEmit', { cwd: ROOT, stdio: 'inherit' });
+    log.success('TypeScript check passed');
+    fixed++;
+  } catch (e) {
+    log.error('TypeScript check failed');
+    issues++;
+  }
+}
+
+// ========================================
 // Main
 // ========================================
 console.log('\n🏥 We-ne Mobile Doctor\n');
-console.log(`Mode: ${FIX_MODE ? 'FIX' : 'CHECK'}\n`);
+console.log(`Mode: ${FIX_MODE ? 'FIX' : 'CHECK'}${BUILD_REPAIR ? ' + BUILD_REPAIR' : ''}\n`);
 console.log('─'.repeat(50));
+
+// Build repair mode: run repair first, then check
+if (BUILD_REPAIR) {
+  runBuildRepair();
+  console.log('');
+}
 
 // Critical checks first
 checkLockedFiles();
@@ -385,13 +459,15 @@ checkAssets();
 
 console.log('\n' + '─'.repeat(50));
 console.log(`\n📊 Summary: ${issues} issue(s) found`);
-if (FIX_MODE) {
+if (FIX_MODE || BUILD_REPAIR) {
   console.log(`🔧 Fixed: ${fixed} issue(s)`);
 }
 
-if (issues > 0 && !FIX_MODE) {
+if (issues > 0 && !FIX_MODE && !BUILD_REPAIR) {
   console.log(`\n💡 Run with --fix to auto-fix some issues:`);
   console.log(`   node scripts/doctor.js --fix\n`);
+  console.log(`   Or run build repair:`);
+  console.log(`   node scripts/doctor.js --build-repair\n`);
 }
 
 if (issues === 0) {

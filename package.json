@@ -10,7 +10,9 @@
     "test": "npm run test:contract",
     "test:contract": "cd grant_program && anchor test",
     "test:mobile": "cd wene-mobile && npx tsc --noEmit",
-    "setup:mobile": "cd wene-mobile && npm run setup"
+    "setup:mobile": "cd wene-mobile && npm run setup",
+    "clean-install": "bash scripts/clean-install.sh",
+    "clean-install:pull": "git pull && bash scripts/clean-install.sh"
   },
   "repository": {
     "type": "git",

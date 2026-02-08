@@ -23,6 +23,7 @@ npx expo prebuild --clean
 | `npm run setup` | Full environment setup (install + doctor + prebuild) |
 | `npm run doctor` | Check for common issues |
 | `npm run doctor:fix` | Auto-fix common issues |
+| `npm run doctor:build-repair` | Fix build issues (install, prebuild, local.properties, tsc) |
 | `npm run build:apk` | Build Android APK |
 | `npm run deploy:adb` | Build and install via ADB |
 | `npm start` | Start Expo dev server |
@@ -37,6 +38,9 @@ npm run doctor
 
 # Auto-fix issues
 npm run doctor:fix
+
+# Fix build issues (npm install, local.properties, tsc, prebuild)
+npm run doctor:build-repair
 ```
 
 ### 🔒 Locked Files Protection (完成形保護)

@@ -6,6 +6,7 @@
     "postinstall": "patch-package",
     "doctor": "node scripts/doctor.js",
     "doctor:fix": "node scripts/doctor.js --fix",
+    "doctor:build-repair": "node scripts/doctor.js --fix --build-repair",
     "setup": "bash scripts/setup.sh",
     "generate-icons": "node scripts/generate-icons.js",
     "deploy:adb": "bash scripts/deploy-via-adb.sh",

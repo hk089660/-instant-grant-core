@@ -3,7 +3,8 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppText, Button, Card, AdminShell } from '../../ui/components';
 import { adminTheme } from '../../ui/adminTheme';
-import { getMockAdminRole, setMockAdminRole, mockEvents, mockParticipants } from '../../data/adminMock';
+import { getMockAdminRole, setMockAdminRole, mockEvents } from '../../data/adminMock';
+import { useSyncedAdminData } from '../../data/adminUserSync';
 
 export const AdminEventDetailScreen: React.FC = () => {
   const router = useRouter();
@@ -11,7 +12,9 @@ export const AdminEventDetailScreen: React.FC = () => {
   const [role, setRole] = React.useState(getMockAdminRole());
   const canPrint = role === 'admin';
   const canDownloadCsv = role === 'admin';
-  const event = mockEvents.find((item) => item.id === eventId) ?? mockEvents[0];
+  const { syncedEvents, getParticipantsForEvent } = useSyncedAdminData();
+  const event = syncedEvents.find((item) => item.id === eventId) ?? mockEvents[0];
+  const participants = getParticipantsForEvent(eventId ?? event.id);
 
   return (
     <AdminShell
@@ -118,7 +121,7 @@ export const AdminEventDetailScreen: React.FC = () => {
               参加時刻
             </AppText>
           </View>
-          {mockParticipants.map((p) => (
+          {participants.map((p) => (
             <View key={p.id} style={styles.participantRow}>
               <View style={styles.participantInfo}>
                 <AppText variant="bodyLarge" style={styles.cardText}>

@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AppText, Button, AdminSearchBar, Card, AdminShell } from '../../ui/components';
 import { adminTheme } from '../../ui/adminTheme';
-import { getMockAdminRole, setMockAdminRole, mockParticipantLogs } from '../../data/adminMock';
+import { getMockAdminRole, setMockAdminRole } from '../../data/adminMock';
+import { useSyncedAdminData } from '../../data/adminUserSync';
+import { mockParticipantLogs } from '../../data/adminMock';
+import type { ParticipantLogEntry } from '../../data/adminUserSync';
 
 export const AdminParticipantsScreen: React.FC = () => {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [role, setRole] = useState(getMockAdminRole());
+  const { participantLogs } = useSyncedAdminData();
+  const allLogs: ParticipantLogEntry[] = useMemo(
+    () => [
+      ...participantLogs,
+      ...mockParticipantLogs.filter((m) => !participantLogs.some((p) => p.id === m.id || p.code === m.code)),
+    ],
+    [participantLogs]
+  );
 
   return (
     <AdminShell
@@ -30,8 +41,8 @@ export const AdminParticipantsScreen: React.FC = () => {
         <AdminSearchBar value={query} onChange={setQuery} />
 
         <Card style={styles.card}>
-          {mockParticipantLogs.map((result) => (
-            <View key={result.code} style={styles.resultRow}>
+          {allLogs.map((result, idx) => (
+            <View key={`${result.id}-${idx}`} style={styles.resultRow}>
               <View>
                 <AppText variant="bodyLarge" style={styles.cardText}>
                   {result.id}
@@ -40,7 +51,7 @@ export const AdminParticipantsScreen: React.FC = () => {
                   表示名: {result.display}
                 </AppText>
                 <AppText variant="caption" style={styles.cardMuted}>
-                  イベント: {result.event}
+                  イベント: {result.event ?? '-'}
                 </AppText>
               </View>
               <View style={styles.meta}>

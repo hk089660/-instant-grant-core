@@ -4,6 +4,13 @@
 This project is currently under **Superteam Japan Grants review**.
 It is in a **PoC / v0** phase, focused on the demo flow below.
 
+## Vision (Why This Project Exists)
+We-ne explores a model where public support and community program benefits can arrive more like an airdrop than a repeated application queue.
+The long-term direction is broader than schools, but this grant is scoped as a technical PoC.
+We treat school operations as a "small society" for low-risk, real-world validation of distribution flow and operational load.
+Our UX principle is to keep blockchain in the background so students and staff use familiar actions, not Web3-specific steps.
+This README prioritizes what is validated now, while keeping the longer direction visible but modest.
+
 ### Recent Updates (Stability Improvements)
 
 - Introduced participation state tracking (`started` / `completed`) to ensure accurate "incomplete / completed" views for users
@@ -75,16 +82,31 @@ School participation flow logic, types, and error handling have been restructure
 
 → Details: [wene-mobile/docs/STATIC_VERIFICATION_REPORT.md](./wene-mobile/docs/STATIC_VERIFICATION_REPORT.md), [Development Guide](./docs/DEVELOPMENT.md), [Emulator Development](./wene-mobile/docs/EMULATOR_DEVELOPMENT.md)
 
-### First Target Use Case: School Event Participation Ticket
-The first concrete use case of **We-ne** is a **digital participation ticket for school events and volunteer activities**.
+## School PoC (First Target for This Grant)
+This grant evaluates a technical PoC scoped to one correspondence high school.
+The school is treated as a closed validation environment with real usage, limited participants, and clear rollback options.
 
-- Students scan a QR code at the event venue
-- A non-transferable digital participation ticket is issued instantly
-- No monetary value or exchangeability
-- Personal information (name, student number) is not exposed externally
-- Event organizers can verify participation counts via an admin interface
+**What this PoC validates**
+- QR-based participation flow in a real school event context
+- Instant issuance of a non-transferable digital participation proof
+- Reduced operational burden for teachers and school operators
+- UX where students complete participation without Web3-specific knowledge
+- Participation management without externally exposing personal information
 
-This use case prioritizes **speed, usability, and privacy**, making it suitable for real educational environments.
+**Why devnet-only, non-cash, and non-speculative**
+- To run safe technical verification with controlled failure impact
+- To make clear that this PoC is not for financial payouts or speculative assets
+
+### Success Criteria for This PoC
+- Teachers/operators feel the flow is practical to run during real school events
+- Students can complete participation without special operations or prior Web3 knowledge
+- The boundary between implemented and not-yet-implemented components is explicitly documented
+
+### Out of Scope for This PoC
+- Production-grade authentication and identity verification
+- Real grants, cash disbursement, or redeemable/exchangeable financial assets
+- Direct integration with external public-sector systems
+Future extension toward broader public support use cases is possible, but not committed in this grant scope.
 
 ### Distribution (School PoC)
 
@@ -356,6 +378,22 @@ npm run build:apk
 # Output: android/app/build/outputs/apk/release/app-release.apk
 ```
 
+### Clean install (別ターミナルで変更を取り込む)
+
+別ターミナルでリポジトリを更新してからクリーンインストールする場合:
+
+```bash
+cd /path/to/we-ne
+
+# リモートの変更を取り込んでからクリーンインストール
+npm run clean-install:pull
+
+# または、すでに pull 済みなら
+npm run clean-install
+```
+
+実行内容: `node_modules` とキャッシュ削除 → ルートと wene-mobile の `npm install` → `wene-mobile` で `doctor:build-repair`。
+
 ### Troubleshooting
 
 Use the built-in doctor script to diagnose and fix issues:
@@ -366,9 +404,12 @@ npm run doctor
 
 # Auto-fix issues
 npm run doctor:fix
+
+# Build repair (npm install, local.properties, prebuild, tsc)
+cd wene-mobile && npm run doctor:build-repair
 ```
 
-The doctor checks: dependencies, polyfills, SafeArea configuration, Phantom integration, Android SDK setup, and more.
+The doctor checks: dependencies, polyfills, SafeArea configuration, Phantom integration, Android SDK setup, and more. Use `doctor:build-repair` when the build fails or after clean checkout.
 
 ### Build Smart Contract
 

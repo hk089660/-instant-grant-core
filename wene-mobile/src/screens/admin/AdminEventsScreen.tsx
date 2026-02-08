@@ -3,7 +3,8 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AppText, Button, CategoryTabs, CountBadge, EventRow, AdminShell, StatusBadge } from '../../ui/components';
 import { adminTheme } from '../../ui/adminTheme';
-import { getMockAdminRole, setMockAdminRole, mockCategories, mockEvents } from '../../data/adminMock';
+import { getMockAdminRole, setMockAdminRole, mockCategories } from '../../data/adminMock';
+import { useSyncedAdminData } from '../../data/adminUserSync';
 
 export const AdminEventsScreen: React.FC = () => {
   const router = useRouter();
@@ -11,6 +12,7 @@ export const AdminEventsScreen: React.FC = () => {
   const [role, setRole] = useState(getMockAdminRole());
   const canManageCategories = role === 'admin';
   const canCreateEvent = role === 'admin' || role === 'operator';
+  const { syncedEvents } = useSyncedAdminData();
 
   return (
     <AdminShell
@@ -50,7 +52,7 @@ export const AdminEventsScreen: React.FC = () => {
         />
 
         <View style={styles.list}>
-          {mockEvents.map((event) => (
+          {syncedEvents.map((event) => (
             <EventRow
               key={event.id}
               title={event.title}

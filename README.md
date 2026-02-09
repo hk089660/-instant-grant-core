@@ -2,7 +2,7 @@
 
 **Instant, transparent benefit distribution on Solana — built for Japan's public support needs.**
 
-[![CI](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml)
+[![CI](https://github.com/hk089660/instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/instant-grant-core/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 ---
@@ -100,7 +100,7 @@ Mock/partial: QR is button-driven (no camera scan yet); some admin buttons (e.g.
 
 ## Key links
 
-- **GitHub**: https://github.com/hk089660/-instant-grant-core
+- **GitHub**: https://github.com/hk089660/instant-grant-core
 - **Demo (X post)**: https://x.com/Shiki93278/status/2015659939356889450
 - **Superteam Earn profile**: TBD (public URL not added yet)
 - **Grant page**: TBD (public URL not added yet)
@@ -112,7 +112,7 @@ Mock/partial: QR is button-driven (no camera scan yet); some admin buttons (e.g.
 **Prerequisites**: Node.js v18+ (v20 LTS recommended), npm. For contract: Rust, Solana CLI, Anchor. For mobile: Android SDK (e.g. API 36), Java 17 (see [Development Guide](./docs/DEVELOPMENT.md)).
 
 ```bash
-git clone https://github.com/hk089660/-instant-grant-core.git
+git clone https://github.com/hk089660/instant-grant-core.git
 cd we-ne
 
 # Build contract + mobile typecheck
@@ -173,12 +173,12 @@ npm start
 
 ## Contact
 
-- **Issues**: [GitHub Issues](https://github.com/hk089660/-instant-grant-core/issues)  
-- **Discussions**: [GitHub Discussions](https://github.com/hk089660/-instant-grant-core/discussions)  
+- **Issues**: [GitHub Issues](https://github.com/hk089660/instant-grant-core/issues)  
+- **Discussions**: [GitHub Discussions](https://github.com/hk089660/instant-grant-core/discussions)  
 - **Security**: [SECURITY.md](./SECURITY.md)
 
 ---
 
-[日本語版 README](./README.ja.md)
+[Japanese README](./README.ja.md)
 
 <p align="center"><i>Built for public good on Solana</i></p>

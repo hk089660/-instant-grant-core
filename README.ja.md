@@ -2,7 +2,7 @@
 
 **Solana 上の即時・透明な支援配布 — 日本の公的支援ニーズ向け**
 
-[![CI](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/-instant-grant-core/actions/workflows/ci.yml)
+[![CI](https://github.com/hk089660/instant-grant-core/actions/workflows/ci.yml/badge.svg)](https://github.com/hk089660/instant-grant-core/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 ---
@@ -105,7 +105,7 @@ we-ne は Solana 上で動作する **非保管型の支援・参加システム
 
 ## 重要リンク
 
-- **GitHub**: https://github.com/hk089660/-instant-grant-core
+- **GitHub**: https://github.com/hk089660/instant-grant-core
 - **Demo（X 投稿）**: https://x.com/Shiki93278/status/2015659939356889450
 - **Superteam Earn profile**: TBD（公開URL未反映）
 - **Grant page**: TBD（公開URL未反映）
@@ -117,7 +117,7 @@ we-ne は Solana 上で動作する **非保管型の支援・参加システム
 **前提**: Node.js v18 以上（v20 LTS 推奨）、npm。コントラクト: Rust、Solana CLI、Anchor。モバイル: Android SDK（例: API 36）、Java 17。詳細は [開発ガイド](./docs/DEVELOPMENT.md)。
 
 ```bash
-git clone https://github.com/hk089660/-instant-grant-core.git
+git clone https://github.com/hk089660/instant-grant-core.git
 cd we-ne
 
 # コントラクト + モバイル型チェック
@@ -178,8 +178,8 @@ npm start
 
 ## 連絡先
 
-- **課題・要望**: [GitHub Issues](https://github.com/hk089660/-instant-grant-core/issues)  
-- **議論**: [GitHub Discussions](https://github.com/hk089660/-instant-grant-core/discussions)  
+- **課題・要望**: [GitHub Issues](https://github.com/hk089660/instant-grant-core/issues)  
+- **議論**: [GitHub Discussions](https://github.com/hk089660/instant-grant-core/discussions)  
 - **脆弱性報告**: [SECURITY.md](./SECURITY.md)
 
 ---

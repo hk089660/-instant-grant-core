@@ -10,6 +10,7 @@ Enable instant, transparent, and low-cost benefit distribution for public suppor
 
 ✅ **Completed**
 - SPL token-based periodic grants (smart contract)
+- Optional Merkle allowlist primitives in contract (`set_allowlist_root`, `claim_grant_with_proof`)
 - Mobile app for recipients (React Native/Expo)
 - Phantom wallet integration
 - Deep link support (custom scheme + Universal Links)
@@ -18,7 +19,7 @@ Enable instant, transparent, and low-cost benefit distribution for public suppor
 ## Short Term (2 Weeks)
 
 ### Smart Contract
-- [ ] Merkle-based allowlist verification
+- [ ] Wire `claim_grant_with_proof` into app/API flow (contract side is implemented)
 - [ ] Event emission for better indexing
 - [ ] Instruction to update grant parameters
 
@@ -56,7 +57,8 @@ Enable instant, transparent, and low-cost benefit distribution for public suppor
 
 ## Long Term (3 Months)
 
-### FairScale Integration
+### FairScale Integration (Next grant milestone; not implemented in this repo yet)
+- [ ] FairScale reputation input adapter for eligibility checks
 - [ ] Sybil resistance layer
 - [ ] Privacy-preserving eligibility proofs
 - [ ] Cross-grant deduplication
@@ -81,7 +83,7 @@ Enable instant, transparent, and low-cost benefit distribution for public suppor
 | Milestone | Deliverable | Timeline |
 |-----------|-------------|----------|
 | M1 | Devnet MVP with docs | Complete |
-| M2 | Allowlist + audit prep | +2 weeks |
+| M2 | Allowlist flow wiring + FairScale eligibility adapter (PoC) | +2 weeks |
 | M3 | Admin dashboard + audit | +1 month |
 | M4 | Mainnet beta + partners | +3 months |
 

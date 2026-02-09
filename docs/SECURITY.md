@@ -38,15 +38,16 @@ we-ne is designed with a **non-custodial** security model. The mobile app never 
 - PDA seeds include `period_index` - one receipt per period per user
 - Solana's built-in replay protection via recent blockhash
 
-**Code Location**: `grant_program/src/lib.rs` - `claim` instruction
+**Code Location**: `grant_program/programs/grant_program/src/lib.rs` - `claim_grant` / `claim_grant_with_proof`
 
 ### 4. Sybil Attacks
 
 **Threat**: Attacker creates multiple wallets to claim multiple times.
 
 **Mitigations**:
-- **Current**: Allowlist-based eligibility (Merkle root)
-- **Planned**: FairScale integration for Sybil resistance
+- **Current (contract-level)**: Optional Merkle allowlist checks (`set_allowlist_root` + `claim_grant_with_proof`)
+- **Current limitation (app flow)**: Mobile PoC claim path uses `claim_grant` (no proof input), so allowlist/FairScale gating is not wired end-to-end
+- **Planned (next grant milestone)**: FairScale integration for Sybil resistance and eligibility gating input
 - **Design Choice**: Not identity-based to preserve privacy
 
 **Limitations**: Allowlist management is off-chain responsibility

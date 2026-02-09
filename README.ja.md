@@ -63,7 +63,8 @@ we-ne は Solana 上で動作する **非保管型の支援・参加システム
 - 本番向け認証・KYC。  
 - 実際の現金給付や譲渡可能な資産。  
 - 行政システムとの直接連携。  
-- 本番レベルの Allowlist/Merkle や FairScale レピュテーション（計画あり、本グラントでは約束しない）。
+- Allowlist 運用の本番化（UI/API 自動化、監視、運用プロセス）。  
+- FairScale レピュテーション gating の本番実装。現リポジトリでは FairScale を claim 条件入力としてまだ受け取っておらず、**同一グラントトラックの次マイルストーン**で実装予定。
 
 ### 成功基準
 
@@ -85,6 +86,13 @@ we-ne は Solana 上で動作する **非保管型の支援・参加システム
 
 モック・部分実装: QR はボタン操作（カメラスキャンは未実装）；管理者の「イベント作成」「CSV」等はプレースホルダー。詳細は [wene-mobile/docs/FEATURE_STATUS.md](./wene-mobile/docs/FEATURE_STATUS.md)。
 
+## FairScale の現状（事実ベース）
+
+- **未実装（現リポジトリ）**: FairScale レピュテーションは claim 実行の条件入力として未接続。  
+- **PoC で実装済み**: コントラクトには任意の Merkle allowlist 機能（`set_allowlist_root` / `claim_grant_with_proof`）がある。  
+- **未接続（E2E）**: 現在のモバイル claim 経路は `claimGrant` を使っており、proof 入力がないため allowlist/FairScale 条件はアプリフローに統合されていない。  
+- **次マイルストーン（同一グラントトラック）**: FairScale ベースの eligibility 入力と gating アダプタを PoC 実装し、その後に本番化を進める。
+
 ---
 
 ## デモ
@@ -95,12 +103,21 @@ we-ne は Solana 上で動作する **非保管型の支援・参加システム
 
 ---
 
+## 重要リンク
+
+- **GitHub**: https://github.com/hk089660/-instant-grant-core
+- **Demo（X 投稿）**: https://x.com/Shiki93278/status/2015659939356889450
+- **Superteam Earn profile**: TBD（公開URL未反映）
+- **Grant page**: TBD（公開URL未反映）
+
+---
+
 ## クイックスタート
 
 **前提**: Node.js v18 以上（v20 LTS 推奨）、npm。コントラクト: Rust、Solana CLI、Anchor。モバイル: Android SDK（例: API 36）、Java 17。詳細は [開発ガイド](./docs/DEVELOPMENT.md)。
 
 ```bash
-git clone https://github.com/<owner>/we-ne.git
+git clone https://github.com/hk089660/-instant-grant-core.git
 cd we-ne
 
 # コントラクト + モバイル型チェック

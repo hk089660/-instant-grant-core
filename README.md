@@ -58,7 +58,8 @@ For this grant, the **first use case** is a **digital participation ticket for s
 - Production authentication / KYC.  
 - Real cash disbursement or tradable assets.  
 - Integration with government systems.  
-- Production-grade allowlist/Merkle or FairScale reputation (planned, not committed for this grant).
+- Fully productionized allowlist operations (UI/API automation, monitoring, incident process).  
+- FairScale reputation gating in production form. Current repository does **not** yet accept FairScale reputation as a claim input; this is scheduled for the **next milestone in this grant track**.
 
 ### Success criteria
 
@@ -80,6 +81,13 @@ For this grant, the **first use case** is a **digital participation ticket for s
 
 Mock/partial: QR is button-driven (no camera scan yet); some admin buttons (e.g. “Create event”, “CSV”) are placeholders. See [wene-mobile/docs/FEATURE_STATUS.md](./wene-mobile/docs/FEATURE_STATUS.md) for a full list.
 
+## FairScale status (fact-based)
+
+- **Not implemented yet (current repo)**: FairScale reputation is not wired as an input condition for claim execution.
+- **Implemented in PoC**: Optional on-chain allowlist primitives exist in the contract (`set_allowlist_root`, `claim_grant_with_proof`).
+- **Not yet wired end-to-end**: Current mobile claim path uses `claimGrant` (no proof input), so allowlist/FairScale-based eligibility is not integrated in the app flow.
+- **Next milestone (this grant track)**: FairScale-based eligibility input and gating adapter (PoC-level), then hardening for production later.
+
 ---
 
 ## Demo
@@ -90,12 +98,21 @@ Mock/partial: QR is button-driven (no camera scan yet); some admin buttons (e.g.
 
 ---
 
+## Key links
+
+- **GitHub**: https://github.com/hk089660/-instant-grant-core
+- **Demo (X post)**: https://x.com/Shiki93278/status/2015659939356889450
+- **Superteam Earn profile**: TBD (public URL not added yet)
+- **Grant page**: TBD (public URL not added yet)
+
+---
+
 ## Quick start
 
 **Prerequisites**: Node.js v18+ (v20 LTS recommended), npm. For contract: Rust, Solana CLI, Anchor. For mobile: Android SDK (e.g. API 36), Java 17 (see [Development Guide](./docs/DEVELOPMENT.md)).
 
 ```bash
-git clone https://github.com/<owner>/we-ne.git
+git clone https://github.com/hk089660/-instant-grant-core.git
 cd we-ne
 
 # Build contract + mobile typecheck

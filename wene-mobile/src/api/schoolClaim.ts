@@ -7,7 +7,7 @@
  * 実装は schoolClaimClient で差し替え可能。
  */
 
-import { Transaction, PublicKey } from '@solana/web3.js';
+import { Transaction, PublicKey, TransactionInstruction } from '@solana/web3.js';
 import type { SchoolClaimResult } from '../types/school';
 import { createMockSchoolClaimClient } from './schoolClaimClient.mock';
 import { schoolEventProvider } from './schoolEvents';
@@ -21,8 +21,11 @@ import { getConnection } from '../solana/anchorClient';
 
 const client = createMockSchoolClaimClient(schoolEventProvider);
 
+// Memo Program ID
+const MEMO_PROGRAM_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
+
 /**
- * 学校参加券用の簡易トランザクションを構築（空のトランザクション）
+ * 学校参加券用の簡易トランザクションを構築（Memo instruction を含む）
  */
 async function buildSchoolClaimTx(recipientPubkey: PublicKey): Promise<{
   tx: Transaction;
@@ -34,7 +37,17 @@ async function buildSchoolClaimTx(recipientPubkey: PublicKey): Promise<{
   const tx = new Transaction();
   tx.recentBlockhash = blockhash;
   tx.feePayer = recipientPubkey;
-  // 空のトランザクション（PoC最小実装）
+  
+  // Memo instruction を追加（空Txを避けるため）
+  const memoData = new TextEncoder().encode('school-claim');
+  tx.add(
+    new TransactionInstruction({
+      programId: MEMO_PROGRAM_ID,
+      keys: [],
+      data: memoData as Buffer,
+    })
+  );
+  
   return { tx, recentBlockhash: blockhash, lastValidBlockHeight };
 }
 

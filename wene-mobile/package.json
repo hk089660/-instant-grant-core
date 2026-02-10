@@ -36,7 +36,9 @@
     "dev:api": "tsx server/index.ts",
     "dev:web": "npm run web",
     "dev:full": "concurrently \"npm run dev:api\" \"npm run web\"",
-    "test:server": "vitest run server/__tests__"
+    "test:server": "vitest run server/__tests__",
+    "deploy:pages": "npx wrangler pages deploy dist --project-name we-ne-school-ui",
+    "verify:pages": "bash scripts/verify-pages-build.sh https://we-ne-school-ui.pages.dev"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",

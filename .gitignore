@@ -94,3 +94,4 @@ wene-mobile/android/.cxx/
 *.log
 coverage/
 .nyc_output/
+wene-mobile/dist-upload.zip

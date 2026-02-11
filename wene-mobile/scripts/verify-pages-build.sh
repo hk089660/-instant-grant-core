@@ -28,7 +28,7 @@ if [ -z "$LOCAL_INDEX_JS" ]; then
   fail "Local file not found: ${LOCAL_JS_DIR}/index-*.js (Expo web export may have failed)."
 fi
 
-LOCAL_JS_HASH="$(shasum -a 256 " | awk '{print $1}')"
+LOCAL_JS_HASH="$(shasum -a 256 "${LOCAL_INDEX_JS}" | awk '{print $1}')"
 log "LOCAL_JS=${LOCAL_INDEX_JS}"
 log "LOCAL_SHA256=${LOCAL_JS_HASH}"
 
@@ -49,12 +49,12 @@ if [ -z "$REMOTE_SCRIPT_PATH" ]; then
 fi
 
 REMOTE_JS_URL="${PAGES_BASE_URL}${REMOTE_SCRIPT_PATH}"
-REMOTE_JS_HASH="$(curl -sSL "${REMOTE_JS_URL}" | shasum -a 256 | awk '{print $1}')" || true
+REMOTE_JS_HASH="$(curl -sSL "${REMOTE_JS_URL}" | shasum -a 256 | awk '{print $1}')"
 if [ -z "$REMOTE_JS_HASH" ]; then
   fail "Could not download remote JS bundle: ${REMOTE_JS_URL}"
 fi
 
-logS_URL}"
+log "REMOTE_JS=${REMOTE_JS_URL}"
 log "REMOTE_SHA256=${REMOTE_JS_HASH}"
 
 if [ "$LOCAL_JS_HASH" != "$REMOTE_JS_HASH" ]; then
@@ -78,7 +78,7 @@ EVENTS_CT_RAW="$(printf '%s\n' "$EVENTS_HEADERS" | grep -i '^content-type:' | he
 
 log "CHECK: GET /v1/school/events status=${EVENTS_STATUS_CODE} content-type=${EVENTS_CT_RAW}"
 
-if [ "${EVENTS_STATUS_CODE}" != n
+if [ "${EVENTS_STATUS_CODE}" != "200" ]; then
   fail "Expected HTTP 200 from /v1/school/events but got ${EVENTS_STATUS_CODE}."
 fi
 
@@ -105,6 +105,6 @@ elif [ "$REGISTER_STATUS" = "405" ]; then
   fail "POST /api/users/register returned 405 (likely hitting Cloudflare Pages directly)."
 fi
 
-log users/register is not 405 (current status=${REGISTER_STATUS})."
+log "OK: /api/users/register is not 405 (current status=${REGISTER_STATUS})."
 log "OK: proxy works."
 exit 0

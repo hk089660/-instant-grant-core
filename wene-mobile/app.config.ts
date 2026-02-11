@@ -32,6 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: 'wene-mobile',
     slug: 'wene-mobile',
+    platforms: ['ios', 'android', 'web'],
     scheme: 'wene', // wene://r/*, wene://phantom/connect, wene://phantom/sign
     version: timestamp ? `1.0.0-${timestamp}` : '1.0.0',
     orientation: 'portrait',

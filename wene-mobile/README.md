@@ -82,7 +82,6 @@ Phantom strictly validates cluster consistency (**devnet / testnet / mainnet**).
 
 * `evt-001`: Success
 * `evt-002`: Already joined (`alreadyJoined`) → navigates to success screen
-* `evt-003`: Retryable error → "Retry" to re-claim
 
 ### Verification (static)
 

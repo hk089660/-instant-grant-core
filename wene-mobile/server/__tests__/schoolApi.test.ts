@@ -58,11 +58,4 @@ describe('school API', () => {
     expect(second.body.success).toBe(true);
     expect(second.body.alreadyJoined).toBe(true);
   });
-
-  it('POST /v1/school/claims evt-003 returns retryable failure', async () => {
-    const res = await request(app).post('/v1/school/claims').send({ eventId: 'evt-003' });
-    expect(res.status).toBe(503);
-    expect(res.body.success).toBe(false);
-    expect(res.body.error?.code).toBe('retryable');
-  });
 });

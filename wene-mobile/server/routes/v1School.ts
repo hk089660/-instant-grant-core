@@ -62,19 +62,6 @@ export function createV1SchoolRouter(deps: V1SchoolDeps): Router {
       } as SchoolClaimResult);
       return;
     }
-
-    // evt-003: 強制的に retryable
-    if (eventId === 'evt-003') {
-      res.status(503).json({
-        success: false,
-        error: {
-          code: 'retryable',
-          message: '接続できませんでした。しばらくしてから再試行してください。',
-        },
-      } as SchoolClaimResult);
-      return;
-    }
-
     const existing = storage.getClaims(eventId);
     const alreadyByWallet = walletAddress && existing.some((c) => c.walletAddress === walletAddress);
     const alreadyByToken = joinToken && existing.some((c) => (c as { joinToken?: string }).joinToken === joinToken);

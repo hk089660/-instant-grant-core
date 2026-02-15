@@ -1,6 +1,6 @@
-/**
+/****
  * メモリストレージ（テストで flaky ゼロ）
- * 実証向けに evt-001/002/003 を固定で持つ
+ * 実証向けに evt-001/002 を固定で持つ
  */
 
 import type { SchoolEvent } from '../../src/types/school';
@@ -24,13 +24,6 @@ const SEED_EVENTS: SchoolEvent[] = [
     title: '進路説明会',
     datetime: '2026/02/10 15:00-16:00',
     host: '進路指導室',
-    state: 'published',
-  },
-  {
-    id: 'evt-003',
-    title: '体育祭',
-    datetime: '2026/02/15 09:00-15:00',
-    host: '体育委員会',
     state: 'published',
   },
 ];

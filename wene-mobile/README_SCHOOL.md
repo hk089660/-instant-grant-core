@@ -132,6 +132,32 @@ Success画面に表示される以下を確認：
 
 ---
 
+## トラブルシューティング / 既知の挙動
+
+* `/v1/school/events` が HTML を返す：`_redirects` の proxy が適用されていない、または誤った成果物がデプロイされている可能性があります。
+* `/_redirects` を直接 fetch して 404：Pages では正常な場合があります（ファイルとして常に参照できるとは限りません）。実行時の挙動で確認してください（`/v1` が JSON、`/api` が `405 Method Not Allowed` ではないこと）。
+* ログイン/ユーザー状態：ブラウザ/端末のストレージに保持される想定です。共有端末テストではプライベートブラウズを推奨します。
+* Web の `/u/scan` カメラUI：現状はモック/制限がある前提です。推奨手順は、印刷QRをスマホ標準カメラ/QRリーダーで読み取り、`/u/scan?eventId=...` を開くことです。
+
+---
+
+## 詳細ドキュメント
+
+* School PoC guide: このドキュメント（`README_SCHOOL.md`）
+* Cloudflare Pages deployment notes: `./docs/CLOUDFLARE_PAGES.md`
+* Worker API details: `../api-worker/README.md`
+* Devnet setup: `../docs/DEVNET_SETUP.md`
+
+---
+
+## 審査員向けコンテキスト
+
+* このリポジトリは助成金/PoC審査用の再現キットです。
+* 重要なのは機能のマーケティングではなく、再現性と独立検証です。
+* 特に Explorer 証拠（devnet）の確認を優先してください。
+
+---
+
 ## 配布（運用メモ）
 
 * **Android**：APK配布（Play Store不要）

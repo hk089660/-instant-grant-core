@@ -36,20 +36,20 @@ Why it matters for Solana Foundation / Instagrant: this is the path to stronger 
 
 ## Camera / QR Scan Implementation Status
 
-Status: In progress
+Status: Implemented (PoC)
 
 - Working today: admin print page (`/admin/print/<eventId>`) generates a QR for `/u/scan?eventId=<eventId>` and supports print/PDF export.
-- Working today: reviewers can complete the user flow by opening the QR URL (phone camera/QR reader or direct browser open).
-- Current limitation: in-app `/u/scan` camera preview is a mock UI; QR decode inside the app is not implemented yet.
+- Working today: `/u/scan` now includes in-app camera permission handling and QR decode.
+- Working today: scanned payloads are parsed for `eventId` and routed to `/u/confirm?eventId=...`.
+- Working today: web scanning uses `@zxing/browser` fallback for browsers without BarcodeDetector.
 - Current limitation: scan fallback is URL-driven (`default evt-001` when `eventId` is missing) for deterministic PoC demos.
-- Why this scope: the PoC prioritized reproducible end-to-end routing and claim verification across Pages/devnet before camera-device integration.
-- Reviewer test now: run the Demo steps as-is and verify `/u/confirm -> /u/success` plus Explorer links; camera behavior is mock by design.
+- Reviewer test now: run the Demo steps and verify `/u/scan -> /u/confirm -> /u/success` plus Explorer links.
 
 Reviewer shortcut: check `./wene-mobile/src/screens/user/UserScanScreen.tsx` and `./wene-mobile/src/screens/admin/AdminPrintScreen.tsx`.
 
 ### Roadmap (PoC Completion)
 
-- Milestone 1 (`Status: In progress`): replace mock scan view with real QR decode + permission handling in `/u/scan`.
+- Milestone 1 (`Status: Complete`): replaced mock scan view with real QR decode + permission handling in `/u/scan`.
 - Milestone 2 (`Status: Planned`): add fallback manual `eventId` entry + expired/invalid QR messaging, then cover with UI/API tests.
 
 ## Quickstart (Local)

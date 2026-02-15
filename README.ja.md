@@ -36,20 +36,20 @@ Why it matters for Solana Foundation / Instagrant: 監査可能性を維持し�
 
 ## カメラ/QRスキャン実装状況
 
-状態：開発中
+状態：実装済み（PoC）
 
 - 現在動作している点: 管理者の印刷画面（`/admin/print/<eventId>`）で `/u/scan?eventId=<eventId>` の QR を生成し、印刷/PDF出力できる。
-- 現在動作している点: レビュアーは QR URL を開くことで利用者フローを完走できる（スマホのカメラ/QRリーダー、またはブラウザ直開き）。
-- 現在の制限: アプリ内 `/u/scan` のカメラプレビューはモック UI で、アプリ内 QR デコードは未実装。
-- 現在の制限: スキャンのフォールバックは URL ベース（`eventId` 未指定時は `evt-001`）で、PoC デモの再現性を優先している。
-- このスコープにしている理由: カメラ端末統合より先に、Pages/devnet での end-to-end ルーティングとクレーム検証の再現性を優先したため。
-- 現時点のレビュアーテスト: 現行の Demo 手順どおりに `/u/confirm -> /u/success` と Explorer リンクを確認し、カメラ挙動は仕様どおりモックとして扱う。
+- 現在動作している点: 利用者画面 `/u/scan` でカメラ権限ハンドリング付きの QR 読み取りを実装（in-app decode）。
+- 現在動作している点: QR 文字列から `eventId` を抽出し、`/u/confirm?eventId=...` へ遷移できる。
+- 現在動作している点: Web は `@zxing/browser` で読み取り（BarcodeDetector 非対応ブラウザでもフォールバック）。
+- 現在の制限: スキャンのフォールバックは URL ベース（`eventId` 未指定時は `evt-001`）で、PoC デモ再現性を優先している。
+- 現時点のレビュアーテスト: 現行の Demo 手順どおりに `/u/scan -> /u/confirm -> /u/success` と Explorer リンクを確認する。
 
 Reviewer shortcut: `./wene-mobile/src/screens/user/UserScanScreen.tsx` と `./wene-mobile/src/screens/admin/AdminPrintScreen.tsx` を確認してください。
 
 ### ロードマップ（PoC完了まで）
 
-- マイルストーン1（`状態：開発中`）: `/u/scan` に実スキャン処理（QRデコード + 権限ハンドリング）を実装する。
+- マイルストーン1（`状態：完了`）: `/u/scan` に実スキャン処理（QRデコード + 権限ハンドリング）を実装。
 - マイルストーン2（`状態：予定`）: `eventId` 手入力フォールバック + 期限切れ/無効QRメッセージを追加し、UI/API テストで固定する。
 
 ## クイックスタート（ローカル）

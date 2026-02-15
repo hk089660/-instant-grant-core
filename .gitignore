@@ -95,3 +95,6 @@ wene-mobile/android/.cxx/
 coverage/
 .nyc_output/
 wene-mobile/dist-upload.zip
+
+# Cloudflare Wrangler
+api-worker/.wrangler/

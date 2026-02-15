@@ -19,8 +19,8 @@ export interface AuthState {
 }
 
 export interface AuthContextValue extends AuthState {
-  setUserId: (userId: string) => void;
-  setDisplayName: (displayName: string) => void;
+  setUserId: (userId?: string | null) => void;
+  setDisplayName: (displayName?: string | null) => void;
   clearUser: () => void;
   refresh: () => void;
 }
@@ -46,14 +46,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refresh();
   }, [refresh]);
 
-  const setUserId = useCallback((userId: string) => {
-    persistUserId(userId);
-    setState((prev) => ({ ...prev, userId: userId.trim(), isReady: true }));
+  const setUserId = useCallback((userId?: string | null) => {
+    const normalized = typeof userId === 'string' ? userId.trim() : '';
+
+    if (!normalized) {
+      setState((prev) => ({
+        ...prev,
+        userId: null,
+        isReady: true,
+      }));
+      return;
+    }
+
+    persistUserId(normalized);
+
+    setState((prev) => ({
+      ...prev,
+      userId: normalized,
+      isReady: true,
+    }));
   }, []);
 
-  const setDisplayName = useCallback((displayName: string) => {
-    persistDisplayName(displayName);
-    setState((prev) => ({ ...prev, displayName: displayName.trim() }));
+  const setDisplayName = useCallback((displayName?: string | null) => {
+    const normalized = typeof displayName === 'string' ? displayName.trim() : '';
+
+    if (!normalized) {
+      // Storage側に「displayName削除」APIがない前提なので、stateだけnullに戻す
+      setState((prev) => ({ ...prev, displayName: null }));
+      return;
+    }
+
+    persistDisplayName(normalized);
+    setState((prev) => ({ ...prev, displayName: normalized }));
   }, []);
 
   const clearUser = useCallback(() => {

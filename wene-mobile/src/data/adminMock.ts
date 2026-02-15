@@ -7,7 +7,36 @@ export const setMockAdminRole = (role: Role): void => {
   currentRole = role;
 };
 
-export const mockCategories = [
+type MockCategory = {
+  id: string;
+  label: string;
+};
+
+type MockEvent = {
+  id: string;
+  title: string;
+  datetime: string;
+  host: string;
+  state: EventState;
+};
+
+export const mockCategories: MockCategory[] = [];
+
+export const mockEvents: MockEvent[] = [
+  {
+    id: 'evt-001',
+    title: '地域清掃ボランティア',
+    datetime: '2026/02/02 09:00-10:30',
+    host: '生徒会',
+    state: 'published',
+  },
+  {
+    id: 'evt-002',
+    title: '進路説明会',
+    datetime: '2026/02/10 15:00-16:00',
+    host: '進路指導室',
+    state: 'published',
+  },
 ];
 
 export const mockParticipants = [

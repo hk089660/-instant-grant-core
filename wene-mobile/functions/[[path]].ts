@@ -1,4 +1,9 @@
-export async function onRequest(context) {
+type PagesFunctionContext = {
+  request: Request;
+  next: () => Response | Promise<Response>;
+};
+
+export async function onRequest(context: PagesFunctionContext): Promise<Response> {
   const { request } = context;
   const url = new URL(request.url);
 
@@ -14,7 +19,7 @@ export async function onRequest(context) {
   const WORKER_ORIGIN = "https://instant-grant-core.haruki-kira3.workers.dev";
   const target = new URL(url.pathname + url.search, WORKER_ORIGIN);
 
-  const init = {
+  const init: RequestInit = {
     method: request.method,
     headers: request.headers,
     body: ["GET", "HEAD"].includes(request.method) ? undefined : request.body,
